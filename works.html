@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Works - Peterilliant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
@@ -18,7 +19,8 @@
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
 
-        .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; }
+        /* Filter Button Styling */
+        .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
         .filter-btn.active::after {
             content: ''; position: absolute; bottom: -8px; left: 50%; 
@@ -26,10 +28,9 @@
             background-color: var(--brand-turquoise); border-radius: 50%;
         }
 
-        .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hidden-item { display: none; }
+        .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; }
 
-        /* Unified Media Container for Grid Balance */
+        /* Unified Media Container */
         .card-media-container {
             width: 100%;
             height: 450px; 
@@ -39,56 +40,32 @@
             position: relative;
         }
 
-        .video-wrapper { height: 100%; width: 100%; }
-        .video-wrapper iframe {
-            width: 100%; height: 100%;
-            filter: grayscale(0%) !important;
-        }
+        .video-wrapper, .video-wrapper iframe { height: 100%; width: 100%; }
 
         .work-image-placeholder {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-            object-position: center;
-            filter: grayscale(0%);
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
             transition: all 0.5s ease;
-            border: 1px solid rgba(255,255,255,0.05);
         }
 
         .work-card:hover .work-image-placeholder { 
-            filter: grayscale(100%); 
-            opacity: 0.6;
-            transform: scale(1.03); /* Subtle zoom on hover */
+            filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); 
         }
 
-        /* Lightbox Fixes */
         #lightbox {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background-color: rgba(0,0,0,0.95);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            overflow-y: auto;
-            padding: 5vh 5vw;
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background-color: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            overflow-y: auto; padding: 5vh 5vw;
         }
         #lightbox.active { display: block; }
-        .lightbox-content img {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto 4rem auto;
-            border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="mainpage.html" onclick="sessionStorage.setItem('skipIntro', 'true');"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
+            <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
             <div class="space-x-8 text-white uppercase text-xs font-bold hidden sm:flex">
-                <a href="mainpage.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+                <a href="index.html" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="text-[#40E0D0]">Works</a>
                 <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
                 <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
@@ -107,112 +84,7 @@
             <button onclick="filterWorks('graphics')" class="filter-btn" id="graphics-btn">Graphics</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid">
-            
-            <div class="work-card motion">
-                <div class="card-media-container">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/b9d9R1PL2Bo?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Motion</p>
-                    <h3 class="text-lg font-black uppercase">Gotta Communicate</h3>
-                </div>
-            </div>
-
-            <div class="work-card motion">
-                <div class="card-media-container">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/Kph_BC-W22w?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Motion</p>
-                    <h3 class="text-lg font-black uppercase">SUPEREGG</h3>
-                </div>
-            </div>
-
-            <div class="work-card motion">
-                <div class="card-media-container">
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/RWHfIuJJ3H0?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Motion</p>
-                    <h3 class="text-lg font-black uppercase">hwayo</h3>
-                </div>
-            </div>
-
-            <div class="work-card stills">
-                <div class="cursor-none relative group" onclick="openGallery('stills-frag')">
-                    <div class="card-media-container">
-                        <img src="images/works/Frag_1.jpg" alt="Frag Main" class="work-image-placeholder">
-                        <div class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="text-[8px] font-bold uppercase tracking-widest text-white">View Series</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Stills / series</p>
-                    <h3 class="text-lg font-black uppercase">Frag</h3>
-                </div>
-                <div id="stills-frag-data" class="hidden">
-                    <img src="images/works/Frag_1.jpg">
-                    <img src="images/works/Frag_2.jpg">
-                    <img src="images/works/Frag_3.jpg">
-                    <img src="images/works/Frag_4.jpg">
-                    <img src="images/works/Frag_5.jpg">
-                    <img src="images/works/Frag_6.jpg">
-                    <img src="images/works/Frag_7.jpg">
-                    <img src="images/works/Frag_8.jpg">
-                    <img src="images/works/Frag_9.jpg"> 
-                </div>
-            </div>
-
-            <div class="work-card stills">
-                <div class="cursor-none relative group" onclick="openGallery('stills-aurora')">
-                    <div class="card-media-container">
-                        <img src="images/works/Aurora_main.jpg" alt="Aurora Main" class="work-image-placeholder">
-                        <div class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="text-[8px] font-bold uppercase tracking-widest text-white">View Series</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Stills / series</p>
-                    <h3 class="text-lg font-black uppercase">Aurora</h3>
-                </div>
-                <div id="stills-aurora-data" class="hidden">
-                    <img src="images/works/Aurora_main.jpg">
-                    <img src="images/works/Aurora_1.jpg">
-                    <img src="images/works/Aurora_2.jpg">
-                    <img src="images/works/Aurora_3.jpg">
-                </div>
-            </div>
-
-            <div class="work-card graphics">
-                <div class="card-media-container">
-                    <img src="images/works/graphics-placeholder-1.jpg" alt="Project" class="work-image-placeholder">
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Graphics</p>
-                    <h3 class="text-lg font-black uppercase">Graphic Study 01</h3>
-                </div>
-            </div>
-
-            <div class="work-card graphics">
-                <div class="card-media-container">
-                    <img src="images/works/graphics-placeholder-2.jpg" alt="Project" class="work-image-placeholder">
-                </div>
-                <div class="mt-5 px-1">
-                    <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">Graphics</p>
-                    <h3 class="text-lg font-black uppercase">Graphic Study 02</h3>
-                </div>
-            </div>
-
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid"></div>
     </main>
 
     <div id="lightbox" onclick="closeGallery()">
@@ -225,36 +97,80 @@
     </footer>
 
     <script>
+        /** * 1. UPDATE THIS LIST
+         * Whenever you create a new project in the CMS, add the filename here.
+         */
+        const projectFiles = [
+            'cms-test-project.md'
+        ]; 
+
+        async function loadCMSWorks() {
+            const grid = document.getElementById('works-grid');
+            grid.innerHTML = ''; // Clear existing
+            
+            for (const file of projectFiles) {
+                try {
+                    const response = await fetch(`./content/projects/${file}`);
+                    const text = await response.text();
+                    
+                    // Split the markdown to get the YAML data (frontmatter)
+                    const parts = text.split('---');
+                    if (parts.length < 2) continue;
+                    
+                    const data = jsyaml.load(parts[1]);
+
+                    const card = document.createElement('div');
+                    // Ensure the category class is added for the filter logic
+                    const categoryClass = data.category.toLowerCase().replace(/\s/g, '-');
+                    card.className = `work-card ${categoryClass}`;
+                    
+                    let mediaHTML = '';
+                    if (data.media_type === 'YouTube') {
+                        mediaHTML = `
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/${data.media_ref}?rel=0" frameborder="0" allowfullscreen></iframe>
+                            </div>`;
+                    } else {
+                        // Images are assumed to be in images/works/
+                        mediaHTML = `<img src="images/works/${data.media_ref}" class="work-image-placeholder" onerror="this.src='https://via.placeholder.com/800x450?text=Image+Not+Found'">`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="card-media-container shadow-2xl">${mediaHTML}</div>
+                        <div class="mt-5 px-1">
+                            <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">${data.category}</p>
+                            <h3 class="text-lg font-black uppercase">${data.title}</h3>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                } catch (e) { 
+                    console.error("Error loading CMS file:", file, e); 
+                }
+            }
+        }
+
+        // Filter Functionality
         function filterWorks(category) {
             const cards = document.querySelectorAll('.work-card');
             const buttons = document.querySelectorAll('.filter-btn');
+            
+            // UI Update
             buttons.forEach(btn => btn.classList.remove('active'));
-            document.getElementById(category + '-btn').classList.add('active');
+            const activeBtn = document.getElementById(category + '-btn');
+            if (activeBtn) activeBtn.classList.add('active');
+
+            // Card Filtering
             cards.forEach(card => {
                 if (category === 'all' || card.classList.contains(category)) {
-                    card.classList.remove('hidden-item');
+                    card.style.display = 'block';
                 } else {
-                    card.classList.add('hidden-item');
+                    card.style.display = 'none';
                 }
             });
         }
 
-        function openGallery(galleryId) {
-            const lightbox = document.getElementById('lightbox');
-            const content = lightbox.querySelector('.lightbox-content');
-            const dataDiv = document.getElementById(galleryId + '-data');
-            if(dataDiv) {
-                content.innerHTML = dataDiv.innerHTML;
-                lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden'; 
-            }
-        }
-
-        function closeGallery() {
-            const lightbox = document.getElementById('lightbox');
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto'; 
-        }
+        // Initialize
+        window.onload = loadCMSWorks;
     </script>
 </body>
 </html>

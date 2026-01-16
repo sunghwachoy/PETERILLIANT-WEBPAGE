@@ -1,0 +1,31 @@
+backend:
+  name: git-gateway
+  branch: main # Ensure this matches your GitHub branch name
+
+local_backend: true # Allows you to test the CMS on your Mac
+
+media_folder: "images/works" # Where images will be uploaded
+public_folder: "/images/works"
+
+collections:
+  - name: "projects"
+    label: "Portfolio Works"
+    folder: "content/projects"
+    create: true
+    slug: "{{title}}"
+    fields:
+      - { label: "Project Title", name: "title", widget: "string" }
+      - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills"] }
+      - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
+      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", hint: "e.g., b9d9R1PL2Bo for YouTube or frag_1.jpg for images" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+
+  - name: "taste"
+    label: "Taste / Moodboard"
+    folder: "content/taste"
+    create: true
+    slug: "taste-{{year}}-{{month}}-{{day}}-{{title}}"
+    fields:
+      - { label: "Inspiration Name", name: "title", widget: "string" }
+      - { label: "Upload Image", name: "image", widget: "image" }
+      - { label: "Date Added", name: "date", widget: "datetime" }
