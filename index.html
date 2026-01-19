@@ -6,6 +6,7 @@
     <title>Peterilliant - Portfolio</title>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
@@ -35,31 +36,36 @@
         .hero-logo-img { width: 100%; height: auto; transform: scale(1.05); mix-blend-mode: multiply; transition: filter 0.5s ease; }
         body.scrolled { background-color: #0a0a0a; color: #ffffff !important; }
         body.scrolled .hero-logo-img { mix-blend-mode: normal; filter: invert(1); }
-        .project-card { background-color: #f6f6f6; border-radius: 1.5rem; border: 1px solid #ddd; overflow: hidden; transition: 0.4s; }
+        
+        /* Updated Project Card styles for dynamic loading */
+        .project-card { background-color: #f6f6f6; border-radius: 1.5rem; border: 1px solid #ddd; overflow: hidden; transition: 0.4s; height: 100%; }
         body.scrolled .project-card { background-color: #111; border-color: #222; }
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .video-container iframe, .video-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        
         .more-btn { width: 80px; transition: 0.3s; }
         .more-btn:hover { transform: scale(1.1); }
         .hover-turquoise:hover { color: var(--brand-turquoise) !important; }
-        
-        /* Added for Mobile Menu */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="no-scroll">
     <script>
-        if (sessionStorage.getItem('skipIntro') === 'true') { document.body.classList.remove('no-scroll'); }
+        if (sessionStorage.getItem('skipIntro') === 'true') { 
+            document.body.classList.remove('no-scroll'); 
+        }
     </script>
+
     <div id="video-greeting" ondblclick="exitIntro()">
         <div class="skip-hint">Double Click to Skip</div>
         <video id="greeting-video" autoplay muted playsinline preload="auto">
             <source src="images/peterilliant_welcome.mp4" type="video/mp4">
         </video>
     </div>
+
     <header class="fixed top-0 w-full z-50 p-6 bg-black/90 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" onclick="sessionStorage.removeItem('skipIntro')">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')">
                 <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
             </a>
             
@@ -98,21 +104,9 @@
         </section>
 
         <section class="py-32">
-            <h2 class="text-4xl font-black mb-12 uppercase">Works</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="project-card">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/b9d9R1PL2Bo?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">Gotta Communicate</h3></div>
+            <h2 class="text-4xl font-black mb-12 uppercase">Featured Works</h2>
+            <div class="grid md:grid-cols-2 gap-8" id="featured-grid">
                 </div>
-                <div class="project-card">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/Kph_BC-W22w?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">SUPEREGG</h3></div>
-                </div>
-            </div>
             <div class="mt-12 flex justify-center">
                 <a href="works.html"><img src="images/2_c_more.png" class="more-btn"></a>
             </div>
@@ -135,6 +129,7 @@
             <span id="copy-hint" class="block mt-4 opacity-0 text-[#40E0D0] font-bold transition">Copied!</span>
         </section>
     </main>
+
     <footer class="p-12 text-center text-xs opacity-40 uppercase tracking-widest">&copy; 2026 Peterilliant.</footer>
 
     <script>
@@ -144,17 +139,67 @@
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        // Mobile Menu Toggle Logic
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+
+        // INTRO LOGIC
+        let hasExited = false;
+        window.addEventListener('DOMContentLoaded', () => { 
+            if (sessionStorage.getItem('skipIntro') === 'true') { 
+                greetingOverlay.classList.add('hide-instantly'); 
+                document.body.classList.remove('no-scroll'); 
+                hasExited = true; 
+                if (heroVideo) heroVideo.play(); 
+            } 
+            loadFeaturedWorks(); 
         });
 
-        let hasExited = false;
-        window.addEventListener('DOMContentLoaded', () => { if (sessionStorage.getItem('skipIntro') === 'true') { greetingOverlay.classList.add('hide-instantly'); document.body.classList.remove('no-scroll'); hasExited = true; if (heroVideo) heroVideo.play(); } });
-        const exitIntro = () => { if (!hasExited) { hasExited = true; greetingVideo.classList.add('video-fade'); greetingOverlay.classList.add('greeting-exit'); document.body.classList.remove('no-scroll'); if (heroVideo) heroVideo.play(); } };
+        const exitIntro = () => { 
+            if (!hasExited) { 
+                hasExited = true; 
+                sessionStorage.setItem('skipIntro', 'true'); // Set skip after first watch
+                greetingVideo.classList.add('video-fade'); 
+                greetingOverlay.classList.add('greeting-exit'); 
+                document.body.classList.remove('no-scroll'); 
+                if (heroVideo) heroVideo.play(); 
+            } 
+        };
+
         greetingVideo.onended = exitIntro;
         greetingVideo.addEventListener('timeupdate', () => { if (greetingVideo.currentTime >= 18) exitIntro(); });
         window.onscroll = () => { if (window.scrollY > 500) document.body.classList.add('scrolled'); else document.body.classList.remove('scrolled'); };
+
+        // DYNAMIC CONTENT LOGIC (Matching Works.html)
+        async function loadFeaturedWorks() {
+            const grid = document.getElementById('featured-grid');
+            try {
+                const username = 'sunghwachoy'; 
+                const repo = 'PETERILLIANT-WEBPAGE'; 
+                const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/content/projects`);
+                const files = await response.json();
+                
+                // Only show the first 2 projects on Homepage
+                const featuredFiles = files.filter(f => f.name.endsWith('.md')).slice(0, 2);
+                
+                for (const file of featuredFiles) {
+                    const res = await fetch(file.download_url);
+                    const text = await res.text();
+                    const data = jsyaml.load(text.split('---')[1]);
+                    
+                    const card = document.createElement('div');
+                    card.className = "project-card";
+                    let media = data.media_type === 'YouTube' 
+                        ? `<iframe src="https://www.youtube.com/embed/${data.media_ref}?rel=0" frameborder="0" allowfullscreen></iframe>`
+                        : `<img src="images/works/${data.media_ref}" alt="${data.title}">`;
+
+                    card.innerHTML = `
+                        <div class="video-container">${media}</div>
+                        <div class="p-8"><h3 class="text-2xl font-bold uppercase">${data.title}</h3></div>
+                    `;
+                    grid.appendChild(card);
+                }
+            } catch (e) { console.error("Featured error:", e); }
+        }
+
         function copyEmail(button, email) { navigator.clipboard.writeText(email); const hint = document.getElementById('copy-hint'); hint.style.opacity = "1"; setTimeout(() => { hint.style.opacity = "0"; }, 2000); }
     </script>
 </body>
