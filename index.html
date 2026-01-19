@@ -12,7 +12,6 @@
         :root { --brand-turquoise: #40E0D0; }
         html { scroll-behavior: smooth; }
         
-        /* Video Greeting Styles */
         #video-greeting {
             position: fixed; inset: 0; background-color: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; overflow: hidden;
@@ -58,7 +57,7 @@
 </head>
 <body class="no-scroll">
 
-    <div id="video-greeting" ondblclick="exitIntro()">
+    <div id="video-greeting">
         <div class="skip-hint">Double Click to Skip</div>
         <video id="greeting-video" autoplay muted playsinline preload="auto">
             <source src="images/peterilliant_welcome.mp4" type="video/mp4">
@@ -67,7 +66,7 @@
 
     <header class="fixed top-0 w-full z-50 p-6 bg-black/90 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')">
+            <a href="index.html" onclick="sessionStorage.removeItem('skipIntro')">
                 <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
             </a>
             
@@ -107,8 +106,7 @@
 
         <section class="py-32">
             <h2 class="text-4xl font-black mb-12 uppercase">Featured Works</h2>
-            <div class="grid md:grid-cols-2 gap-8" id="featured-grid">
-                </div>
+            <div class="grid md:grid-cols-2 gap-8" id="featured-grid"></div>
             <div class="mt-12 flex justify-center">
                 <a href="works.html"><img src="images/2_c_more.png" class="more-btn"></a>
             </div>
@@ -145,19 +143,14 @@
 
         let hasExited = false;
 
-        // FIXED INTRO LOGIC
+        // SKIP LOGIC
         window.addEventListener('DOMContentLoaded', () => { 
             const skip = sessionStorage.getItem('skipIntro');
-            
             if (skip === 'true') { 
-                // Hide it only if we've explicitly set the skip flag
-                greetingOverlay.classList.add('hide-instantly'); 
+                greetingOverlay.style.display = 'none'; 
                 document.body.classList.remove('no-scroll'); 
                 hasExited = true; 
                 if (heroVideo) heroVideo.play(); 
-            } else {
-                // Otherwise, make sure it's visible
-                greetingOverlay.classList.remove('hide-instantly');
             }
             loadFeaturedWorks(); 
         });
@@ -172,6 +165,8 @@
             } 
         };
 
+        // Double click to skip
+        greetingOverlay.addEventListener('dblclick', exitIntro);
         greetingVideo.onended = exitIntro;
         greetingVideo.addEventListener('timeupdate', () => { if (greetingVideo.currentTime >= 18) exitIntro(); });
         
