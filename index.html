@@ -165,7 +165,7 @@
     <header class="fixed top-0 w-full z-50 p-6 bg-black/90 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" id="header-logo" /></a>
-            <div class="space-x-8 text-white uppercase text-xs font-bold hidden sm:flex">
+            <div class="space-x-4 md:space-x-8 text-white uppercase text-[10px] md:text-xs font-bold flex">
                 <a href="works.html" class="hover-turquoise transition">Works</a>
                 <a href="taste.html" class="hover-turquoise transition">Taste</a>
                 <a href="about.html" class="hover-turquoise transition">About</a>
@@ -192,15 +192,15 @@
             <div class="grid md:grid-cols-2 gap-8">
                 <div class="project-card">
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/b9d9R1PL2Bo?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">Gotta Communicate</h3></div>
-                </div>
-                <div class="project-card">
-                    <div class="video-container">
                         <iframe src="https://www.youtube.com/embed/Kph_BC-W22w?rel=0" frameborder="0" allowfullscreen></iframe>
                     </div>
                     <div class="p-8"><h3 class="text-2xl font-bold uppercase">SUPEREGG</h3></div>
+                </div>
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/b9d9R1PL2Bo?rel=0" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">Gotta Communicate</h3></div>
                 </div>
             </div>
         </section>
@@ -226,7 +226,6 @@
     <footer class="p-12 text-center text-xs opacity-40 uppercase tracking-widest">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // REDIRECT SCRIPT FOR NETLIFY LOGIN
         if (window.netlifyIdentity) {
           window.netlifyIdentity.on("init", user => {
             if (!user) {
