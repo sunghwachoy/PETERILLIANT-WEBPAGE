@@ -1,7 +1,7 @@
 ---
-title: CMS Test Project
+title: Hwayo
 category: Motion
 media_type: YouTube
-media_ref: dQw4w9WgXcQ
+media_ref: RWHfIuJJ3H0?s
 date: 2026-01-15T22:52:00.000+09:00
 ---
