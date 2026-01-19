@@ -10,147 +10,48 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --brand-turquoise: #40E0D0; 
-        }
-        
-        html { 
-            scroll-behavior: smooth; 
-        }
+        :root { --brand-turquoise: #40E0D0; }
+        html { scroll-behavior: smooth; }
 
         /* GREETING OVERLAY */
         #video-greeting {
-            position: fixed; 
-            inset: 0; 
-            background-color: #000; 
-            z-index: 9999;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden;
+            position: fixed; inset: 0; background-color: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
             transition: transform 2.5s cubic-bezier(0.85, 0, 0.15, 1), opacity 1s ease;
         }
-
-        #greeting-video { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
-
-        .greeting-exit { 
-            transform: translateY(-100%); 
-        }
-
-        .video-fade { 
-            opacity: 0; 
-        }
-
-        body.no-scroll { 
-            overflow: hidden; 
-        }
-
+        #greeting-video { width: 100%; height: 100%; object-fit: cover; }
+        .greeting-exit { transform: translateY(-100%); }
+        .video-fade { opacity: 0; }
+        body.no-scroll { overflow: hidden; }
         .skip-hint {
-            position: absolute; 
-            top: 40px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            color: #9ca3af; 
-            text-transform: uppercase; 
-            font-size: 0.7rem;
-            letter-spacing: 0.3em; 
-            font-weight: 700; 
-            pointer-events: none; 
-            z-index: 10000;
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            color: #9ca3af; text-transform: uppercase; font-size: 0.7rem;
+            letter-spacing: 0.3em; font-weight: 700; pointer-events: none; z-index: 10000;
         }
 
         /* MAIN DESIGN */
         body {
-            font-family: 'Inter', sans-serif; 
-            background-color: #ffffff; 
-            color: #0a0a0a;
-            margin: 0; 
-            transition: background-color 0.6s ease, color 0.6s ease;
+            font-family: 'Inter', sans-serif; background-color: #ffffff; color: #0a0a0a;
+            margin: 0; transition: background-color 0.6s ease, color 0.6s ease;
             cursor: url("images/pointer.png"), auto;
         }
-
-        a, button, .project-card { 
-            cursor: url("images/finger_pointer.png"), pointer !important; 
-        }
+        a, button, .project-card { cursor: url("images/finger_pointer.png"), pointer !important; }
+        .video-cropper { width: 100%; max-width: 800px; margin: 0 auto; overflow: hidden; display: flex; position: relative; }
+        .hero-logo-img { width: 100%; height: auto; transform: scale(1.05); mix-blend-mode: multiply; transition: filter 0.5s ease; }
         
-        .video-cropper { 
-            width: 100%; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            overflow: hidden; 
-            display: flex; 
-            position: relative; 
-        }
-
-        .hero-logo-img { 
-            width: 100%; 
-            height: auto; 
-            transform: scale(1.05); 
-            mix-blend-mode: multiply; 
-            transition: filter 0.5s ease; 
-        }
+        body.scrolled { background-color: #0a0a0a; color: #ffffff !important; }
+        body.scrolled .hero-logo-img { mix-blend-mode: normal; filter: invert(1); }
         
-        /* SCROLL STATE */
-        body.scrolled { 
-            background-color: #0a0a0a; 
-            color: #ffffff !important; 
-        }
-
-        body.scrolled .hero-logo-img { 
-            mix-blend-mode: normal; 
-            filter: invert(1); 
-        }
+        .project-card { background-color: #f6f6f6; border-radius: 1.5rem; border: 1px solid #ddd; overflow: hidden; transition: 0.4s; }
+        body.scrolled .project-card { background-color: #111; border-color: #222; }
         
-        /* PROJECT CARDS */
-        .project-card { 
-            background-color: #f6f6f6; 
-            border-radius: 1.5rem; 
-            border: 1px solid #ddd; 
-            overflow: hidden; 
-            transition: 0.4s; 
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        body.scrolled .project-card { 
-            background-color: #111; 
-            border-color: #222; 
-        }
-        
-        .video-container { 
-            position: relative; 
-            padding-bottom: 56.25%; 
-            height: 0; 
-            background: #000; 
-        }
-
-        .video-container iframe { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-        }
-
-        .more-btn { 
-            width: 80px; 
-            transition: 0.3s; 
-        }
-
-        .more-btn:hover { 
-            transform: scale(1.1); 
-        }
-        
-        /* HEADER TRANSITION */
-        header { 
-            transition: background-color 0.5s ease; 
-        }
-
-        .hover-turquoise:hover { 
-            color: var(--brand-turquoise) !important; 
-        }
+        .more-btn { width: 80px; transition: 0.3s; }
+        .more-btn:hover { transform: scale(1.1); }
+        header { transition: background-color 0.5s ease; }
+        .hover-turquoise:hover { color: var(--brand-turquoise) !important; }
     </style>
 </head>
 <body class="no-scroll">
@@ -165,7 +66,7 @@
     <header class="fixed top-0 w-full z-50 p-6 bg-black/90 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" id="header-logo" /></a>
-            <div class="space-x-4 md:space-x-8 text-white uppercase text-[10px] md:text-xs font-bold flex">
+            <div class="flex space-x-4 md:space-x-8 text-white uppercase text-[10px] md:text-xs font-bold">
                 <a href="works.html" class="hover-turquoise transition">Works</a>
                 <a href="taste.html" class="hover-turquoise transition">Taste</a>
                 <a href="about.html" class="hover-turquoise transition">About</a>
@@ -241,19 +142,20 @@
         const heroVideo = document.getElementById('hero-logo-video');
         let hasExited = false;
 
+        // SKIP LOGIC: Checks if you've already seen it this session
         window.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('skipIntro') === 'true') {
+            if (sessionStorage.getItem('introSeen') === 'true') {
                 greetingOverlay.style.display = 'none';
                 document.body.classList.remove('no-scroll');
                 hasExited = true;
                 if (heroVideo) heroVideo.play();
-                sessionStorage.removeItem('skipIntro');
             }
         });
 
         const exitIntro = () => { 
             if (!hasExited) { 
                 hasExited = true; 
+                sessionStorage.setItem('introSeen', 'true'); // Marks intro as "Seen"
                 greetingVideo.classList.add('video-fade'); 
                 greetingOverlay.classList.add('greeting-exit'); 
                 document.body.classList.remove('no-scroll'); 
