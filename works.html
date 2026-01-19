@@ -56,7 +56,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Mobile Menu Transition */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
@@ -121,7 +120,6 @@
             grid.innerHTML = '<p class="opacity-50 uppercase text-[10px] tracking-widest">Loading Projects...</p>';
             
             try {
-                // AUTOMATED GITHUB CONFIG
                 const username = 'sunghwachoy'; 
                 const repo = 'PETERILLIANT-WEBPAGE'; 
                 
@@ -144,7 +142,6 @@
                     const data = jsyaml.load(parts[1]);
                     const card = document.createElement('div');
                     
-                    // Cleanup category for matching filter classes
                     const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
                     card.className = `work-card ${categoryValue}`;
                     
