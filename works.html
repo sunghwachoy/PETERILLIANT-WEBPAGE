@@ -136,10 +136,15 @@
 
                     const response = await fetch(file.download_url);
                     const text = await response.text();
-                    const parts = text.split('---');
-                    if (parts.length < 2) continue;
                     
-                    const data = jsyaml.load(parts[1]);
+                    // IMPROVED PARSING: Splits by dashes and finds the part containing 'title:'
+                    // This is much safer for Admin-generated files.
+                    const parts = text.split('---');
+                    const yamlContent = parts.find(p => p.includes('title:'));
+                    
+                    if (!yamlContent) continue;
+                    
+                    const data = jsyaml.load(yamlContent);
                     const card = document.createElement('div');
                     
                     const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
@@ -147,9 +152,11 @@
                     
                     let mediaHTML = '';
                     if (data.media_type === 'YouTube') {
+                        // Clean ID to remove any extra parameters like ?s
+                        const cleanId = data.media_ref.split('?')[0];
                         mediaHTML = `
                             <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/${data.media_ref}?rel=0" frameborder="0" allowfullscreen></iframe>
+                                <iframe src="https://www.youtube.com/embed/${cleanId}?rel=0" frameborder="0" allowfullscreen></iframe>
                             </div>`;
                     } else {
                         mediaHTML = `<img src="images/works/${data.media_ref}" class="work-image-placeholder">`;
