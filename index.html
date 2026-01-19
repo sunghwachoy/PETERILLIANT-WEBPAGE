@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peterilliant - Portfolio</title>
-    
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
         html { scroll-behavior: smooth; }
-
-        /* GREETING OVERLAY */
         #video-greeting {
             position: fixed; inset: 0; background-color: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; overflow: hidden;
@@ -23,56 +19,70 @@
         .greeting-exit { transform: translateY(-100%); }
         .video-fade { opacity: 0; }
         body.no-scroll { overflow: hidden; }
+        .hide-instantly { display: none !important; }
         .skip-hint {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
             color: #9ca3af; text-transform: uppercase; font-size: 0.7rem;
             letter-spacing: 0.3em; font-weight: 700; pointer-events: none; z-index: 10000;
         }
-
-        /* MAIN DESIGN */
         body {
             font-family: 'Inter', sans-serif; background-color: #ffffff; color: #0a0a0a;
             margin: 0; transition: background-color 0.6s ease, color 0.6s ease;
             cursor: url("images/pointer.png"), auto;
         }
         a, button, .project-card { cursor: url("images/finger_pointer.png"), pointer !important; }
-        .video-cropper { width: 100%; max-width: 800px; margin: 0 auto; overflow: hidden; display: flex; position: relative; }
+        .video-cropper { width: 90%; max-width: 800px; margin: 0 auto; overflow: hidden; display: flex; position: relative; }
         .hero-logo-img { width: 100%; height: auto; transform: scale(1.05); mix-blend-mode: multiply; transition: filter 0.5s ease; }
-        
         body.scrolled { background-color: #0a0a0a; color: #ffffff !important; }
         body.scrolled .hero-logo-img { mix-blend-mode: normal; filter: invert(1); }
-        
         .project-card { background-color: #f6f6f6; border-radius: 1.5rem; border: 1px solid #ddd; overflow: hidden; transition: 0.4s; }
         body.scrolled .project-card { background-color: #111; border-color: #222; }
-        
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
         .more-btn { width: 80px; transition: 0.3s; }
         .more-btn:hover { transform: scale(1.1); }
-        header { transition: background-color 0.5s ease; }
         .hover-turquoise:hover { color: var(--brand-turquoise) !important; }
+        
+        /* Added for Mobile Menu */
+        #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="no-scroll">
-
+    <script>
+        if (sessionStorage.getItem('skipIntro') === 'true') { document.body.classList.remove('no-scroll'); }
+    </script>
     <div id="video-greeting" ondblclick="exitIntro()">
         <div class="skip-hint">Double Click to Skip</div>
         <video id="greeting-video" autoplay muted playsinline preload="auto">
             <source src="images/peterilliant_welcome.mp4" type="video/mp4">
         </video>
     </div>
-
     <header class="fixed top-0 w-full z-50 p-6 bg-black/90 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" id="header-logo" /></a>
-            <div class="flex space-x-4 md:space-x-8 text-white uppercase text-[10px] md:text-xs font-bold">
+            <a href="index.html" onclick="sessionStorage.removeItem('skipIntro')">
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+            </a>
+            
+            <div class="hidden md:flex space-x-8 text-white uppercase text-xs font-bold">
                 <a href="works.html" class="hover-turquoise transition">Works</a>
                 <a href="taste.html" class="hover-turquoise transition">Taste</a>
                 <a href="about.html" class="hover-turquoise transition">About</a>
                 <a href="contact.html" class="hover-turquoise transition">Contact</a>
             </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+            <a href="works.html" class="hover-turquoise transition">Works</a>
+            <a href="taste.html" class="hover-turquoise transition">Taste</a>
+            <a href="about.html" class="hover-turquoise transition">About</a>
+            <a href="contact.html" class="hover-turquoise transition">Contact</a>
+        </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6">
@@ -85,30 +95,32 @@
             <p class="text-xl md:text-2xl text-gray-700 font-light max-w-2xl">
                 A <strong class="font-bold uppercase">Creative Practice</strong> bringing concepts to life visually.
             </p>
-            <a href="works.html" class="mt-8"><img src="images/2_c_more.png" class="more-btn"></a>
         </section>
 
         <section class="py-32">
-            <h2 class="text-4xl font-black mb-12 uppercase">Featured Works</h2>
+            <h2 class="text-4xl font-black mb-12 uppercase">Works</h2>
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="project-card">
-                    <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/Kph_BC-W22w?rel=0" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">SUPEREGG</h3></div>
-                </div>
                 <div class="project-card">
                     <div class="video-container">
                         <iframe src="https://www.youtube.com/embed/b9d9R1PL2Bo?rel=0" frameborder="0" allowfullscreen></iframe>
                     </div>
                     <div class="p-8"><h3 class="text-2xl font-bold uppercase">Gotta Communicate</h3></div>
                 </div>
+                <div class="project-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/Kph_BC-W22w?rel=0" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-8"><h3 class="text-2xl font-bold uppercase">SUPEREGG</h3></div>
+                </div>
+            </div>
+            <div class="mt-12 flex justify-center">
+                <a href="works.html"><img src="images/2_c_more.png" class="more-btn"></a>
             </div>
         </section>
 
         <section class="py-32">
             <div class="grid md:grid-cols-2 gap-12 items-center">
-                <img src="images/myself.jpg" class="rounded-3xl shadow-2xl">
+                <img src="images/myself.jpg" class="rounded-3xl shadow-2xl w-full object-cover h-[400px]">
                 <div>
                     <h2 class="text-4xl font-black mb-6 uppercase">About Me</h2>
                     <p class="text-lg opacity-80 mb-8">Visualizing high-end concepts through motion and art direction.</p>
@@ -118,65 +130,32 @@
         </section>
 
         <section class="py-32 text-center">
-            <h2 class="text-6xl font-black mb-12 uppercase">Let's Talk</h2>
+            <h2 class="text-4xl md:text-6xl font-black mb-12 uppercase">Let's Talk</h2>
             <button onclick="copyEmail(this, 'sunghwachoy@gmail.com')" class="text-2xl font-bold border-b-4 border-[#40E0D0] pb-2 hover-turquoise transition uppercase">sunghwachoy@gmail.com</button>
             <span id="copy-hint" class="block mt-4 opacity-0 text-[#40E0D0] font-bold transition">Copied!</span>
         </section>
     </main>
-
     <footer class="p-12 text-center text-xs opacity-40 uppercase tracking-widest">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        if (window.netlifyIdentity) {
-          window.netlifyIdentity.on("init", user => {
-            if (!user) {
-              window.netlifyIdentity.on("login", () => {
-                document.location.href = "/admin/";
-              });
-            }
-          });
-        }
-
         const greetingVideo = document.getElementById('greeting-video');
         const greetingOverlay = document.getElementById('video-greeting');
         const heroVideo = document.getElementById('hero-logo-video');
-        let hasExited = false;
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-        // SKIP LOGIC: Checks if you've already seen it this session
-        window.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('introSeen') === 'true') {
-                greetingOverlay.style.display = 'none';
-                document.body.classList.remove('no-scroll');
-                hasExited = true;
-                if (heroVideo) heroVideo.play();
-            }
+        // Mobile Menu Toggle Logic
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
 
-        const exitIntro = () => { 
-            if (!hasExited) { 
-                hasExited = true; 
-                sessionStorage.setItem('introSeen', 'true'); // Marks intro as "Seen"
-                greetingVideo.classList.add('video-fade'); 
-                greetingOverlay.classList.add('greeting-exit'); 
-                document.body.classList.remove('no-scroll'); 
-                if (heroVideo) heroVideo.play(); 
-            } 
-        };
-
+        let hasExited = false;
+        window.addEventListener('DOMContentLoaded', () => { if (sessionStorage.getItem('skipIntro') === 'true') { greetingOverlay.classList.add('hide-instantly'); document.body.classList.remove('no-scroll'); hasExited = true; if (heroVideo) heroVideo.play(); } });
+        const exitIntro = () => { if (!hasExited) { hasExited = true; greetingVideo.classList.add('video-fade'); greetingOverlay.classList.add('greeting-exit'); document.body.classList.remove('no-scroll'); if (heroVideo) heroVideo.play(); } };
         greetingVideo.onended = exitIntro;
         greetingVideo.addEventListener('timeupdate', () => { if (greetingVideo.currentTime >= 18) exitIntro(); });
-
-        window.onscroll = () => { 
-            if (window.scrollY > 500) document.body.classList.add('scrolled'); 
-            else document.body.classList.remove('scrolled'); 
-        };
-
-        function copyEmail(button, email) { 
-            navigator.clipboard.writeText(email); 
-            const hint = document.getElementById('copy-hint'); 
-            hint.style.opacity = "1"; 
-            setTimeout(() => { hint.style.opacity = "0"; }, 2000); 
-        }
+        window.onscroll = () => { if (window.scrollY > 500) document.body.classList.add('scrolled'); else document.body.classList.remove('scrolled'); };
+        function copyEmail(button, email) { navigator.clipboard.writeText(email); const hint = document.getElementById('copy-hint'); hint.style.opacity = "1"; setTimeout(() => { hint.style.opacity = "0"; }, 2000); }
     </script>
 </body>
 </html>

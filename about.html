@@ -14,47 +14,70 @@
             color: #ffffff; 
             margin: 0; 
             cursor: url("images/pointer.png"), auto; 
+            overflow-x: hidden;
         }
-        a, button { cursor: url("images/finger_pointer.png"), pointer !important; }
-
-        .nav-link { transition: all 0.3s ease; opacity: 0.5; }
-        .nav-link:hover { opacity: 1; color: var(--brand-turquoise); }
-        .nav-active { color: var(--brand-turquoise); opacity: 1; }
-
+        a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
+        .nav-link-white { transition: all 0.3s ease; color: #ffffff; }
+        .nav-link-white:hover { color: var(--brand-turquoise); }
+        .nav-link-gray { transition: all 0.3s ease; color: rgba(255,255,255,0.5); }
+        .nav-link-gray:hover { color: var(--brand-turquoise); opacity: 1; }
+        .nav-active { color: var(--brand-turquoise); font-weight: 900; }
         .info-row {
             display: grid;
-            /* Change 'cols' to 'columns' */
             grid-template-columns: 1fr 2fr; 
             border-top: 1px solid rgba(255,255,255,0.1);
             padding: 2rem 0;
             align-items: baseline;
+        }
+        @media (max-width: 768px) {
+            .info-row { grid-template-columns: 1fr; gap: 0.5rem; padding: 1.5rem 0; }
         }
         .info-label { 
             font-size: 11px; font-weight: 900; text-transform: uppercase; 
             letter-spacing: 0.3em; color: var(--brand-turquoise); 
         }
         .info-content { font-size: 1.25rem; font-weight: 700; text-transform: uppercase; }
-
         .grayscale-img { filter: grayscale(100%); transition: all 0.5s ease; border: 1px solid rgba(255,255,255,0.05); }
         .grayscale-img:hover { filter: grayscale(0%); border-color: var(--brand-turquoise); }
+
+        /* Mobile Menu Transition */
+        #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
-
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
-            <div class="space-x-8 text-white uppercase text-xs font-bold hidden sm:flex">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="nav-link">Back to Home</a>
-                <a href="works.html" class="nav-link">Works</a>
-                <a href="taste.html" class="nav-link">Taste</a>
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');">
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+            </a>
+            
+            <div class="space-x-8 uppercase text-xs font-bold hidden md:flex">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="nav-link-gray">Back to Home</a>
+                <a href="works.html" class="nav-link-white">Works</a>
+                <a href="taste.html" class="nav-link-white">Taste</a>
                 <a href="about.html" class="nav-active">About</a>
-                <a href="contact.html" class="nav-link">Contact</a>
+                <a href="contact.html" class="nav-link-white">Contact</a>
             </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="opacity-50">Home</a>
+            <a href="works.html">Works</a>
+            <a href="taste.html">Taste</a>
+            <a href="about.html" class="text-[#40E0D0]">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-20"> <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">About</h1> <div class="grid lg:grid-cols-12 gap-20">
+    <main class="max-w-7xl mx-auto px-6 py-20"> 
+        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">About</h1> 
+        <div class="grid lg:grid-cols-12 gap-10 md:gap-20">
             <div class="lg:col-span-4">
                 <img src="images/myself.jpg" alt="Peterilliant" class="w-full grayscale-img mb-10">
                 <div class="space-y-4">
@@ -68,34 +91,29 @@
                     </div>
                 </div>
             </div>
-
             <div class="lg:col-span-8">
                 <div class="mb-24">
                     <p class="text-2xl md:text-4xl font-light leading-snug text-gray-300">
                         Creative professional bridging North American strategy and East Asian aesthetics. Educated at <span class="text-white font-black">OCAD University</span> in Toronto, specializing in advertising design and motion storytelling.
                     </p>
                 </div>
-
                 <div class="border-b border-white/10">
-                    <div class="info-row">
-                        <div class="info-label">Education</div>
-                        <div class="info-content">OCAD University — Advertising Design</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Identity</div>
-                        <div class="info-content">Dual Citizenship (KOR / CAN)</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Studio</div>
-                        <div class="info-content">Peterilliant Creative Practice</div>
-                    </div>
+                    <div class="info-row"><div class="info-label">Education</div><div class="info-content">OCAD University — Advertising Design</div></div>
+                    <div class="info-row"><div class="info-label">Identity</div><div class="info-content">Dual Citizenship (KOR / CAN)</div></div>
+                    <div class="info-row"><div class="info-label">Studio</div><div class="info-content">Peterilliant Creative Practice</div></div>
                 </div>
             </div>
         </div>
     </main>
+    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
-    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
-        &copy; 2026 Peterilliant.
-    </footer>
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
 </body>
 </html>

@@ -1,21 +1,22 @@
 backend:
   name: git-gateway
-  branch: main # Ensure this matches your GitHub branch name
+  branch: main 
 
-local_backend: false # Allows you to test the CMS on your Mac (Switch to false for iPad/Live use)
+local_backend: false 
 
-media_folder: "images/works" # Where images will be uploaded
-public_folder: "/images/works"
+media_folder: "images/works"
+# Changed from "/images/works" to "images/works" for relative pathing
+public_folder: "images/works"
 
 collections:
   - name: "projects"
     label: "Portfolio Works"
     folder: "content/projects"
     create: true
-    slug: "{{title}}"
+    # Using {{slug}} is safer for file naming
+    slug: "{{slug}}"
     fields:
       - { label: "Project Title", name: "title", widget: "string" }
-      # Added "Graphics" to the options below so it appears in your iPad dropdown
       - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics"] }
       - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
       - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", hint: "e.g., b9d9R1PL2Bo for YouTube or frag_1.jpg for images" }

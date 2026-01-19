@@ -35,11 +35,10 @@
             border-radius: 2px;
         }
 
-        /* SIMPLE CENTERED LAYOUT */
         .insta-container {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centers everything horizontally */
+            align-items: center; 
             gap: 16px;
             width: 100%;
         }
@@ -48,7 +47,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px; /* Consistent space between icon and text */
+            gap: 12px; 
             text-decoration: none;
             transition: all 0.3s ease;
         }
@@ -73,23 +72,43 @@
             margin-top: 8px;
             height: 14px; 
         }
+
+        /* Mobile Menu Transition */
+        #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
-            <div class="space-x-8 text-white uppercase text-xs font-bold hidden sm:flex">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');">
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+            </a>
+            
+            <div class="space-x-8 text-white uppercase text-xs font-bold hidden md:flex">
                 <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
                 <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
                 <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
                 <a href="contact.html" class="text-[#40E0D0]">Contact</a>
             </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="opacity-50">Home</a>
+            <a href="works.html">Works</a>
+            <a href="taste.html">Taste</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="text-[#40E0D0]">Contact</a>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 h-[85vh] flex flex-col justify-center text-center">
+    <main class="max-w-7xl mx-auto px-6 min-h-[80vh] pt-24 pb-12 flex flex-col justify-center text-center">
         <h1 class="text-6xl md:text-8xl font-black uppercase mb-6 tracking-tighter">Let's talk</h1>
         
         <div class="contact-divider"></div>
@@ -126,6 +145,15 @@
     </main>
 
     <script>
+        // Menu Toggle Logic
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Copy logic
         function copyToClipboard(text, label) {
             navigator.clipboard.writeText(text).then(() => {
                 const instruction = document.getElementById('instruction-text');

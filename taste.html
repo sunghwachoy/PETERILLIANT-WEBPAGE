@@ -9,139 +9,90 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #0a0a0a; 
-            color: #ffffff; 
-            margin: 0; 
-            cursor: url("images/pointer.png"), auto; 
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; cursor: url("images/pointer.png"), auto; }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; }
 
-        .masonry-grid {
-            column-count: 2;
-            column-gap: 1.5rem;
-            width: 100%;
-        }
+        .masonry-grid { column-count: 2; column-gap: 1.5rem; width: 100%; }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
 
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: 1.5rem;
-            background: #111;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); }
+        .masonry-item img { width: 100%; transition: 0.5s; }
+        .masonry-item:hover img { filter: grayscale(100%); opacity: 0.5; }
+        .masonry-item:hover { transform: scale(0.98); border-color: var(--brand-turquoise); }
 
-        .masonry-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            filter: grayscale(0%);
-            transition: all 0.5s ease;
-            opacity: 1;
-        }
+        .loader { border: 2px solid #222; border-top: 2px solid var(--brand-turquoise); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; margin: 100px auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* REVERSED HOVER: Color to Gray */
-        .masonry-item:hover img {
-            filter: grayscale(100%); 
-            opacity: 0.5;
-        }
-
-        .masonry-item:hover {
-            transform: scale(0.98);
-            border-color: var(--brand-turquoise);
-        }
-
-        .loader {
-            border: 2px solid #222;
-            border-top: 2px solid var(--brand-turquoise);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 0.8s linear infinite;
-            margin: 100px auto;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Mobile Menu Transition */
+        #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')">
                 <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
             </a>
-            <div class="space-x-8 text-white uppercase text-xs font-bold hidden sm:flex">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true');" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+            
+            <div class="space-x-8 uppercase text-xs font-bold hidden md:flex">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
                 <a href="taste.html" class="text-[#40E0D0]">Taste</a>
                 <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
                 <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
             </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="opacity-50">Home</a>
+            <a href="works.html">Works</a>
+            <a href="taste.html" class="text-[#40E0D0]">Taste</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20">
-        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Taste</h1>
+        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter text-left">Taste</h1>
         <div id="loading" class="loader"></div>
         <div id="pinterest-grid" class="masonry-grid"></div>
     </main>
 
-    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
-        &copy; 2026 Peterilliant.
-    </footer>
+    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // Toggle Mobile Menu
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
         async function fetchPinterest() {
-            const username = 'sunghwachoy'; 
-            const feedUrl = `https://www.pinterest.com/${username}/feed.rss`;
-            
-            // Simpler API call to avoid the loading hang
+            const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss`;
             const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
-
             try {
-                const response = await fetch(api_url);
-                const data = await response.json();
-                const grid = document.getElementById('pinterest-grid');
-                const loader = document.getElementById('loading');
-
-                if (data.status === 'ok' && data.items.length > 0) {
-                    loader.style.display = 'none';
-                    data.items.forEach(item => {
-                        const description = item.description;
-                        const imgMatch = description.match(/src="([^"]+)"/);
-                        
-                        let imgSrc = imgMatch ? imgMatch[1] : '';
-                        
-                        // Upscale images to 'originals'
-                        if (imgSrc.includes('236x')) {
-                            imgSrc = imgSrc.replace('236x', 'originals');
-                        }
-
-                        if (imgSrc) {
-                            const card = document.createElement('div');
-                            card.className = 'masonry-item';
-                            card.innerHTML = `
-                                <a href="${item.link}" target="_blank">
-                                    <img src="${imgSrc}" 
-                                         alt="${item.title}" 
-                                         onerror="this.src='${imgSrc.replace('originals', '564x')}';" 
-                                         loading="lazy">
-                                </a>
-                            `;
-                            grid.appendChild(card);
-                        }
-                    });
-                } else {
-                    throw new Error('No items found');
-                }
-            } catch (error) {
-                console.error('Pinterest Sync Error:', error);
-                document.getElementById('loading').innerHTML = "<p class='text-center opacity-50 uppercase text-xs tracking-widest'>Pins are syncing. Refresh in a moment.</p>";
-            }
+                const res = await fetch(api_url); const data = await res.json();
+                const grid = document.getElementById('pinterest-grid'); 
+                document.getElementById('loading').style.display = 'none';
+                data.items.forEach(item => {
+                    const imgMatch = item.description.match(/src="([^"]+)"/);
+                    let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
+                    if (src) {
+                        const card = document.createElement('div'); card.className = 'masonry-item';
+                        card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
+                        grid.appendChild(card);
+                    }
+                });
+            } catch (e) { console.error(e); }
         }
         fetchPinterest();
     </script>
