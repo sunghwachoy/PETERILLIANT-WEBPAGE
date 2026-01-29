@@ -17,7 +17,6 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics"] }
       - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
-  - name: "taste"
       - { label: "Media Ref (ID or Filename)", name: "media_ref", widget: "string", hint: "유튜브는 v= 뒤의 ID값, 이미지는 파일명.확장자" }
       
       # [순서 정렬 시스템] 추가
