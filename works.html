@@ -121,12 +121,20 @@
             
             try {
                 const username = 'sunghwachoy'; 
-                const repo = 'PETERILLIANT-WEBPAGE'; // UPDATED TO MATCH YOUR LOCAL FOLDER NAME
+                const repo = 'PETERILLIANT-WEBPAGE'; // 대문자 하이픈 확인 완료
                 
-                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects`;
+                // 경로를 확실히 하기 위해 변수로 분리했습니다.
+                const path = 'content/projects';
+                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}?t=${new Date().getTime()}`;
+                
+                console.log("요청 주소 확인:", repoUrl); // 콘솔에서 이 주소를 클릭해보세요.
+
                 const repoResponse = await fetch(repoUrl);
                 
-                if (!repoResponse.ok) throw new Error('Could not reach GitHub folder');
+                if (!repoResponse.ok) {
+                    console.error("접속 실패 주소:", repoUrl);
+                    throw new Error('GitHub 폴더에 접근할 수 없습니다.');
+                }
                 
                 const files = await repoResponse.json();
                 grid.innerHTML = ''; 
@@ -169,7 +177,7 @@
                     grid.appendChild(card);
                 }
             } catch (e) { 
-                console.error("Error loading projects:", e);
+                console.error("최종 에러:", e);
                 grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects from GitHub.</p>';
             }
         }
