@@ -17,7 +17,6 @@
             cursor: url("images/pointer.png"), auto; 
             overflow-x: hidden;
         }
-        /* 커서 디테일 복구 */
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
 
         .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
@@ -29,7 +28,6 @@
         }
 
         .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; }
-
         .card-media-container {
             width: 100%; height: 300px; overflow: hidden;
             border-radius: 12px; background: #111; position: relative;
@@ -102,7 +100,6 @@
     </footer>
 
     <script>
-        // 모바일 메뉴 로직 복구
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         if(menuBtn) {
@@ -111,7 +108,6 @@
             });
         }
 
-        // 핵심 기능: CMS 로드 함수 (작동하는 주소 적용)
         async function loadCMSWorks() {
             const grid = document.getElementById('works-grid');
             if(!grid) return;
@@ -126,27 +122,34 @@
                 if (!repoResponse.ok) throw new Error('GitHub 연결 실패');
                 
                 const files = await repoResponse.json();
-                grid.innerHTML = ''; 
+                
+                // 데이터를 담을 배열 생성
+                let projectDataList = [];
 
                 for (const file of files) {
                     if (!file.name.endsWith('.md')) continue;
-
                     const response = await fetch(file.download_url);
                     const text = await response.text();
-                    
                     const parts = text.split('---');
                     const yamlContent = parts.find(p => p.includes('title:'));
                     if (!yamlContent) continue;
                     
                     const data = jsyaml.load(yamlContent);
+                    projectDataList.push(data);
+                }
+
+                // [중요] Admin에서 설정한 order 값에 따라 정렬 (작은 숫자가 위로)
+                projectDataList.sort((a, b) => (a.order || 99) - (b.order || 99));
+
+                grid.innerHTML = ''; 
+
+                projectDataList.forEach(data => {
                     const card = document.createElement('div');
-                    
                     const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
                     card.className = `work-card ${categoryValue}`;
                     
                     let mediaHTML = '';
                     if (data.media_type === 'YouTube') {
-                        // 유투브 ID 추출 로직 강화
                         const cleanId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
                         mediaHTML = `<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${cleanId}?rel=0" frameborder="0" allowfullscreen></iframe></div>`;
                     } else {
@@ -161,14 +164,13 @@
                         </div>
                     `;
                     grid.appendChild(card);
-                }
+                });
             } catch (e) { 
                 console.error("최종 에러:", e);
                 grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
             }
         }
 
-        // 필터 로직 복구
         function filterWorks(category) {
             const cards = document.querySelectorAll('.work-card');
             const buttons = document.querySelectorAll('.filter-btn');
