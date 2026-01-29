@@ -1,33 +1,42 @@
 backend:
-  name: git-gateway
-  branch: main 
+  name: github
+  repo: sunghwachoy/PETERILLIANT-WEBPAGE
+  branch: main
 
-local_backend: false 
-
+# 이미지가 업로드될 경로 설정
 media_folder: "images/works"
-# Changed from "/images/works" to "images/works" for relative pathing
 public_folder: "images/works"
 
 collections:
   - name: "projects"
-    label: "Portfolio Works"
+    label: "Projects"
     folder: "content/projects"
-    create: true
-    # Using {{slug}} is safer for file naming
-    slug: "{{slug}}"
+    create: true # 새 프로젝트 추가 가능 여부
+    slug: "{{title}}" # 파일 저장 이름 규칙
     fields:
-      - { label: "Project Title", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics"] }
       - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
-      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", hint: "e.g., b9d9R1PL2Bo for YouTube or frag_1.jpg for images" }
-      - { label: "Publish Date", name: "date", widget: "datetime" }
-
   - name: "taste"
-    label: "Taste / Moodboard"
-    folder: "content/taste"
-    create: true
-    slug: "taste-{{year}}-{{month}}-{{day}}-{{title}}"
-    fields:
-      - { label: "Inspiration Name", name: "title", widget: "string" }
-      - { label: "Upload Image", name: "image", widget: "image" }
-      - { label: "Date Added", name: "date", widget: "datetime" }
+      - { label: "Media Ref (ID or Filename)", name: "media_ref", widget: "string", hint: "유튜브는 v= 뒤의 ID값, 이미지는 파일명.확장자" }
+      
+      # [순서 정렬 시스템] 추가
+      - { 
+          label: "Order", 
+          name: "order", 
+          widget: "number", 
+          default: 10, 
+          hint: "숫자가 낮을수록 사이트에서 먼저 보입니다 (1, 2, 3...)" 
+        }
+      
+      # [메인 노출 시스템] 추가
+      - { 
+          label: "Show on Main", 
+          name: "show_on_main", 
+          widget: "boolean", 
+          default: false, 
+          hint: "체크하면 index.html의 Featured 섹션에 나타납니다" 
+        }
+      
+      # 본문 내용 (필요 없으면 비워둬도 됨)
+      - { label: "Body", name: "body", widget: "markdown", required: false }
