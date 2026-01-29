@@ -9,105 +9,184 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; }
-        .filter-btn { opacity: 0.4; cursor: pointer; transition: 0.3s; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0a0a0a; 
+            color: #ffffff; 
+            margin: 0; 
+            cursor: url("images/pointer.png"), auto; 
+            overflow-x: hidden;
+        }
+        /* 커서 디테일 복구 */
+        a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
+
+        .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
-        .card-media-container { width: 100%; height: 300px; overflow: hidden; border-radius: 12px; background: #111; }
-        @media (min-width: 768px) { .card-media-container { height: 450px; } }
+        .filter-btn.active::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; 
+            transform: translateX(-50%); width: 4px; height: 4px; 
+            background-color: var(--brand-turquoise); border-radius: 50%;
+        }
+
+        .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; }
+
+        .card-media-container {
+            width: 100%; height: 300px; overflow: hidden;
+            border-radius: 12px; background: #111; position: relative;
+        }
+        @media (min-width: 768px) {
+            .card-media-container { height: 450px; } 
+        }
+
         .video-wrapper, .video-wrapper iframe { height: 100%; width: 100%; }
-        .work-image-placeholder { width: 100%; height: 100%; object-fit: cover; }
+        .work-image-placeholder {
+            width: 100%; height: 100%; object-fit: cover; object-position: center;
+            transition: all 0.5s ease;
+        }
+
+        .work-card:hover .work-image-placeholder { 
+            filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); 
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
-    <header class="p-4 bg-black/90 sticky top-0 z-50">
+    <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')">
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+            </a>
+            
             <div class="space-x-8 text-white uppercase text-xs font-bold hidden md:flex">
-                <a href="index.html" class="opacity-50">Back to Home</a>
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="text-[#40E0D0]">Works</a>
-                <a href="taste.html">Taste</a>
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
+                <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
+                <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
+                <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
             </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="opacity-50">Home</a>
+            <a href="works.html" class="text-[#40E0D0]">Works</a>
+            <a href="taste.html">Taste</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-20">
-        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16">Works</h1>
-        <div id="filter-bar" class="flex space-x-12 mb-20 text-[11px] font-black uppercase tracking-widest overflow-x-auto pb-4">
+    <main class="max-w-7xl mx-auto px-6 py-20 text-left">
+        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works</h1>
+
+        <div class="flex justify-start space-x-12 mb-20 text-[11px] font-black uppercase tracking-[0.4em] overflow-x-auto pb-4 no-scrollbar">
             <button onclick="filterWorks('all')" class="filter-btn active" id="all-btn">All</button>
             <button onclick="filterWorks('motion')" class="filter-btn" id="motion-btn">Motion</button>
             <button onclick="filterWorks('stills')" class="filter-btn" id="stills-btn">Stills</button>
             <button onclick="filterWorks('graphics')" class="filter-btn" id="graphics-btn">Graphics</button>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid"></div>
     </main>
 
+    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
+        &copy; 2026 Peterilliant.
+    </footer>
+
     <script>
+        // 모바일 메뉴 로직 복구
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if(menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // 핵심 기능: CMS 로드 함수 (작동하는 주소 적용)
         async function loadCMSWorks() {
             const grid = document.getElementById('works-grid');
-            if(!grid) return; // 그리드가 없으면 실행 안 함
-            
-            grid.innerHTML = '<p class="opacity-50 uppercase text-xs">Loading Projects...</p>';
+            if(!grid) return;
+            grid.innerHTML = '<p class="opacity-50 uppercase text-[10px] tracking-widest">Loading Projects...</p>';
             
             try {
                 const username = 'sunghwachoy'; 
                 const repo = 'PETERILLIANT-WEBPAGE'; 
-                // 특정 폴더를 지정하지 않고 전체에서 .md를 찾습니다 (보안상 안전함)
-                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents?recursive=1&t=${new Date().getTime()}`;
+                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects?t=${new Date().getTime()}`;
                 
-                const response = await fetch(repoUrl);
-                if (!response.ok) throw new Error("GitHub 접속 실패");
+                const repoResponse = await fetch(repoUrl);
+                if (!repoResponse.ok) throw new Error('GitHub 연결 실패');
                 
-                const allFiles = await response.json();
-                // .md 파일만 필터링
-                const projectFiles = allFiles.filter(f => f.path.endsWith('.md') && !f.path.includes('README'));
-
-                if (projectFiles.length === 0) {
-                    grid.innerHTML = '<p class="text-xs opacity-50 uppercase">No projects found.</p>';
-                    return;
-                }
-
+                const files = await repoResponse.json();
                 grid.innerHTML = ''; 
 
-                for (const file of projectFiles) {
-                    const res = await fetch(file.download_url);
-                    const text = await res.text();
-                    const yamlPart = text.split('---')[1];
-                    if (!yamlPart) continue;
+                for (const file of files) {
+                    if (!file.name.endsWith('.md')) continue;
+
+                    const response = await fetch(file.download_url);
+                    const text = await response.text();
                     
-                    const data = jsyaml.load(yamlPart);
+                    const parts = text.split('---');
+                    const yamlContent = parts.find(p => p.includes('title:'));
+                    if (!yamlContent) continue;
+                    
+                    const data = jsyaml.load(yamlContent);
                     const card = document.createElement('div');
-                    card.className = `work-card ${data.category ? data.category.toLowerCase().trim() : 'all'}`;
                     
-                    let mediaHTML = data.media_type === 'YouTube' 
-                        ? `<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${data.media_ref.split('?')[0]}?rel=0" frameborder="0" allowfullscreen></iframe></div>`
-                        : `<img src="images/works/${data.media_ref}" class="work-image-placeholder">`;
+                    const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
+                    card.className = `work-card ${categoryValue}`;
+                    
+                    let mediaHTML = '';
+                    if (data.media_type === 'YouTube') {
+                        // 유투브 ID 추출 로직 강화
+                        const cleanId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
+                        mediaHTML = `<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${cleanId}?rel=0" frameborder="0" allowfullscreen></iframe></div>`;
+                    } else {
+                        mediaHTML = `<img src="images/works/${data.media_ref}" class="work-image-placeholder">`;
+                    }
 
                     card.innerHTML = `
                         <div class="card-media-container shadow-2xl">${mediaHTML}</div>
                         <div class="mt-5 px-1">
                             <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">${data.category}</p>
                             <h3 class="text-lg font-black uppercase">${data.title}</h3>
-                        </div>`;
+                        </div>
+                    `;
                     grid.appendChild(card);
                 }
-            } catch (e) {
-                grid.innerHTML = `<p class="text-red-500 uppercase text-[10px]">Error: ${e.message}</p>`;
+            } catch (e) { 
+                console.error("최종 에러:", e);
+                grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
             }
         }
 
+        // 필터 로직 복구
         function filterWorks(category) {
             const cards = document.querySelectorAll('.work-card');
             const buttons = document.querySelectorAll('.filter-btn');
+            
             buttons.forEach(btn => btn.classList.remove('active'));
-            const targetBtn = document.getElementById(category + '-btn');
-            if(targetBtn) targetBtn.classList.add('active');
-            cards.forEach(card => card.style.display = (category === 'all' || card.classList.contains(category)) ? 'block' : 'none');
+            const activeBtn = document.getElementById(category + '-btn');
+            if (activeBtn) activeBtn.classList.add('active');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.classList.contains(category.toLowerCase())) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
 
-        // 페이지가 완전히 로드된 후 실행
-        window.addEventListener('DOMContentLoaded', loadCMSWorks);
+        window.onload = loadCMSWorks;
     </script>
 </body>
 </html>
