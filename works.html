@@ -198,7 +198,61 @@
                 }
             });
         }
+        async function loadCMSWorks() {
+            const grid = document.getElementById('works-grid');
+            grid.innerHTML = '<p class="opacity-50 uppercase text-[10px] tracking-widest">Loading Projects...</p>';
+            
+            try {
+                const username = 'sunghwachoy'; 
+                const repo = 'PETERILLIANT-WEBPAGE'; 
+                
+                // 캐시 방지를 위해 시간값을 붙인 경로
+                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects?t=${new Date().getTime()}`;
+                
+                const repoResponse = await fetch(repoUrl);
+                if (!repoResponse.ok) throw new Error('GitHub 폴더 연결 실패');
+                
+                const files = await repoResponse.json();
+                grid.innerHTML = ''; 
 
+                for (const file of files) {
+                    if (!file.name.endsWith('.md')) continue;
+
+                    const response = await fetch(file.download_url);
+                    const text = await response.text();
+                    
+                    const parts = text.split('---');
+                    const yamlContent = parts.find(p => p.includes('title:'));
+                    if (!yamlContent) continue;
+                    
+                    const data = jsyaml.load(yamlContent);
+                    const card = document.createElement('div');
+                    
+                    const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
+                    card.className = `work-card ${categoryValue}`;
+                    
+                    let mediaHTML = '';
+                    if (data.media_type === 'YouTube') {
+                        const cleanId = data.media_ref.split('?')[0];
+                        mediaHTML = `<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${cleanId}?rel=0" frameborder="0" allowfullscreen></iframe></div>`;
+                    } else {
+                        mediaHTML = `<img src="images/works/${data.media_ref}" class="work-image-placeholder">`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="card-media-container shadow-2xl">${mediaHTML}</div>
+                        <div class="mt-5 px-1">
+                            <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">${data.category}</p>
+                            <h3 class="text-lg font-black uppercase">${data.title}</h3>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            } catch (e) { 
+                console.error("최종 에러:", e);
+                grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
+            }
+        }
         window.onload = loadCMSWorks;
     </script>
 </body>
