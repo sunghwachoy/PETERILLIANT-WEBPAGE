@@ -1,41 +1,35 @@
 backend:
-  name: github
-  repo: sunghwachoy/PETERILLIANT-WEBPAGE
+  name: github # git-gateway 대신 github 직접 연결 방식을 사용합니다
+  repo: sunghwachoy/PETERILLIANT-WEBPAGE # 사용자님의 저장소 경로
   branch: main
 
-# 이미지가 업로드될 경로 설정
+local_backend: false 
+
 media_folder: "images/works"
 public_folder: "images/works"
 
 collections:
   - name: "projects"
-    label: "Projects"
+    label: "Portfolio Works"
     folder: "content/projects"
-    create: true # 새 프로젝트 추가 가능 여부
-    slug: "{{title}}" # 파일 저장 이름 규칙
+    create: true
+    slug: "{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Project Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics"] }
       - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
-      - { label: "Media Ref (ID or Filename)", name: "media_ref", widget: "string", hint: "유튜브는 v= 뒤의 ID값, 이미지는 파일명.확장자" }
-      
-      # [순서 정렬 시스템] 추가
-      - { 
-          label: "Order", 
-          name: "order", 
-          widget: "number", 
-          default: 10, 
-          hint: "숫자가 낮을수록 사이트에서 먼저 보입니다 (1, 2, 3...)" 
-        }
-      
-      # [메인 노출 시스템] 추가
-      - { 
-          label: "Show on Main", 
-          name: "show_on_main", 
-          widget: "boolean", 
-          default: false, 
-          hint: "체크하면 index.html의 Featured 섹션에 나타납니다" 
-        }
-      
-      # 본문 내용 (필요 없으면 비워둬도 됨)
-      - { label: "Body", name: "body", widget: "markdown", required: false }
+      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", hint: "유튜브는 ID값, 이미지는 파일명" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      # 여기에 사용자님이 원하신 정렬과 메인 노출 필드를 넣었습니다
+      - { label: "Display Order", name: "order", widget: "number", default: 10, hint: "낮은 숫자일수록 앞에 나옵니다" }
+      - { label: "Show on Main Page", name: "show_on_main", widget: "boolean", default: false, hint: "체크하면 메인 페이지에 노출" }
+
+  - name: "taste"
+    label: "Taste / Moodboard"
+    folder: "content/taste"
+    create: true
+    slug: "taste-{{year}}-{{month}}-{{day}}-{{title}}"
+    fields:
+      - { label: "Inspiration Name", name: "title", widget: "string" }
+      - { label: "Upload Image", name: "image", widget: "image" }
+      - { label: "Date Added", name: "date", widget: "datetime" }
