@@ -121,7 +121,7 @@
             
             try {
                 const username = 'sunghwachoy'; 
-                const repo = 'PETERILLIANT-WEBPAGE'; 
+                const repo = 'PETERILLIANT-WEBPAGE'; // UPDATED TO MATCH YOUR LOCAL FOLDER NAME
                 
                 const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects`;
                 const repoResponse = await fetch(repoUrl);
@@ -137,8 +137,6 @@
                     const response = await fetch(file.download_url);
                     const text = await response.text();
                     
-                    // IMPROVED PARSING: Splits by dashes and finds the part containing 'title:'
-                    // This is much safer for Admin-generated files.
                     const parts = text.split('---');
                     const yamlContent = parts.find(p => p.includes('title:'));
                     
@@ -152,7 +150,6 @@
                     
                     let mediaHTML = '';
                     if (data.media_type === 'YouTube') {
-                        // Clean ID to remove any extra parameters like ?s
                         const cleanId = data.media_ref.split('?')[0];
                         mediaHTML = `
                             <div class="video-wrapper">
