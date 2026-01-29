@@ -1,8 +1,7 @@
 backend:
-  name: github
+  name: github # 이제 Netlify를 거치지 않고 GitHub로 바로 로그인합니다.
   repo: sunghwachoy/PETERILLIANT-WEBPAGE
   branch: main
-  base_url: https://api.netlify.com # 이 줄을 추가해서 Netlify 인증 서버를 직접 지정합니다.
 
 media_folder: "images/works"
 public_folder: "images/works"

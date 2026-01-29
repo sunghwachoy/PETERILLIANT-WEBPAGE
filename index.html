@@ -1,48 +1,11 @@
-backend:
-  name: git-gateway
-  branch: main 
-
-local_backend: false 
-
-media_folder: "images/works"
-public_folder: "images/works"
-
-collections:
-  - name: "projects"
-    label: "Portfolio Works"
-    folder: "content/projects"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Project Title", name: "title", widget: "string" }
-      - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics"] }
-      - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
-      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", hint: "e.g., b9d9R1PL2Bo for YouTube or frag_1.jpg for images" }
-      - { label: "Publish Date", name: "date", widget: "datetime" }
-      
-      # --- 여기서부터 추가된 필드 ---
-      - { 
-          label: "Display Order", 
-          name: "order", 
-          widget: "number", 
-          default: 10, 
-          hint: "숫자가 낮을수록 사이트 상단에 먼저 배치됩니다 (1, 2, 3...)" 
-        }
-      - { 
-          label: "Show on Main Page", 
-          name: "show_on_main", 
-          widget: "boolean", 
-          default: false, 
-          hint: "이걸 켜면 index.html의 Featured Works 섹션에 노출됩니다" 
-        }
-      # --------------------------
-
-  - name: "taste"
-    label: "Taste / Moodboard"
-    folder: "content/taste"
-    create: true
-    slug: "taste-{{year}}-{{month}}-{{day}}-{{title}}"
-    fields:
-      - { label: "Inspiration Name", name: "title", widget: "string" }
-      - { label: "Upload Image", name: "image", widget: "image" }
-      - { label: "Date Added", name: "date", widget: "datetime" }
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Manager</title>
+</head>
+<body>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+</body>
+</html>
