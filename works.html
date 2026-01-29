@@ -9,10 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; overflow-x: hidden; }
-        .filter-btn { transition: all 0.3s ease; opacity: 0.4; cursor: pointer; }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; }
+        .filter-btn { opacity: 0.4; cursor: pointer; transition: 0.3s; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
-        .card-media-container { width: 100%; height: 300px; overflow: hidden; border-radius: 12px; background: #111; position: relative; }
+        .card-media-container { width: 100%; height: 300px; overflow: hidden; border-radius: 12px; background: #111; }
         @media (min-width: 768px) { .card-media-container { height: 450px; } }
         .video-wrapper, .video-wrapper iframe { height: 100%; width: 100%; }
         .work-image-placeholder { width: 100%; height: 100%; object-fit: cover; }
@@ -34,7 +34,7 @@
 
     <main class="max-w-7xl mx-auto px-6 py-20">
         <h1 class="text-6xl md:text-8xl font-black uppercase mb-16">Works</h1>
-        <div class="flex space-x-12 mb-20 text-[11px] font-black uppercase tracking-widest overflow-x-auto pb-4">
+        <div id="filter-bar" class="flex space-x-12 mb-20 text-[11px] font-black uppercase tracking-widest overflow-x-auto pb-4">
             <button onclick="filterWorks('all')" class="filter-btn active" id="all-btn">All</button>
             <button onclick="filterWorks('motion')" class="filter-btn" id="motion-btn">Motion</button>
             <button onclick="filterWorks('stills')" class="filter-btn" id="stills-btn">Stills</button>
@@ -46,28 +46,33 @@
     <script>
         async function loadCMSWorks() {
             const grid = document.getElementById('works-grid');
-            grid.innerHTML = '<p class="opacity-50 uppercase text-xs">Loading...</p>';
+            if(!grid) return; // 그리드가 없으면 실행 안 함
+            
+            grid.innerHTML = '<p class="opacity-50 uppercase text-xs">Loading Projects...</p>';
             
             try {
                 const username = 'sunghwachoy'; 
                 const repo = 'PETERILLIANT-WEBPAGE'; 
-                const path = 'content/projects';
-                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}?t=${new Date().getTime()}`;
+                // 특정 폴더를 지정하지 않고 전체에서 .md를 찾습니다 (보안상 안전함)
+                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents?recursive=1&t=${new Date().getTime()}`;
                 
                 const response = await fetch(repoUrl);
-                if (!response.ok) {
-                    const errorMsg = response.status === 404 ? "폴더 경로를 찾을 수 없음 (404)" : "GitHub 연결 오류";
-                    throw new Error(errorMsg);
-                }
+                if (!response.ok) throw new Error("GitHub 접속 실패");
                 
-                const files = await response.json();
+                const allFiles = await response.json();
+                // .md 파일만 필터링
+                const projectFiles = allFiles.filter(f => f.path.endsWith('.md') && !f.path.includes('README'));
+
+                if (projectFiles.length === 0) {
+                    grid.innerHTML = '<p class="text-xs opacity-50 uppercase">No projects found.</p>';
+                    return;
+                }
+
                 grid.innerHTML = ''; 
 
-                for (const file of files) {
-                    if (!file.name.endsWith('.md')) continue;
+                for (const file of projectFiles) {
                     const res = await fetch(file.download_url);
                     const text = await res.text();
-                    
                     const yamlPart = text.split('---')[1];
                     if (!yamlPart) continue;
                     
@@ -89,7 +94,6 @@
                 }
             } catch (e) {
                 grid.innerHTML = `<p class="text-red-500 uppercase text-[10px]">Error: ${e.message}</p>`;
-                console.error(e);
             }
         }
 
@@ -97,11 +101,13 @@
             const cards = document.querySelectorAll('.work-card');
             const buttons = document.querySelectorAll('.filter-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            document.getElementById(category + '-btn').classList.add('active');
+            const targetBtn = document.getElementById(category + '-btn');
+            if(targetBtn) targetBtn.classList.add('active');
             cards.forEach(card => card.style.display = (category === 'all' || card.classList.contains(category)) ? 'block' : 'none');
         }
 
-        window.onload = loadCMSWorks;
+        // 페이지가 완전히 로드된 후 실행
+        window.addEventListener('DOMContentLoaded', loadCMSWorks);
     </script>
 </body>
 </html>
