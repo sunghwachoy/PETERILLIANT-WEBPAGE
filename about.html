@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Peterilliant</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -39,8 +40,6 @@
         .info-content { font-size: 1.25rem; font-weight: 700; text-transform: uppercase; }
         .grayscale-img { filter: grayscale(100%); transition: all 0.5s ease; border: 1px solid rgba(255,255,255,0.05); }
         .grayscale-img:hover { filter: grayscale(0%); border-color: var(--brand-turquoise); }
-
-        /* Mobile Menu Transition */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
@@ -105,15 +104,30 @@
             </div>
         </div>
     </main>
+
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
+        // 메뉴 관련 스크립트
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Netlify Identity 로그인 후 관리자 페이지로 리다이렉트 로직
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact - Peterilliant</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -73,7 +74,6 @@
             height: 14px; 
         }
 
-        /* Mobile Menu Transition */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
@@ -145,15 +145,17 @@
     </main>
 
     <script>
-        // Menu Toggle Logic
+        // 메뉴 토글
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
-        // Copy logic
+        // 복사 로직
         function copyToClipboard(text, label) {
             navigator.clipboard.writeText(text).then(() => {
                 const instruction = document.getElementById('instruction-text');
@@ -165,6 +167,17 @@
                     hint.style.opacity = "0";
                     instruction.style.opacity = "1";
                 }, 2000);
+            });
+        }
+
+        // Netlify Identity 리다이렉트
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
             });
         }
     </script>

@@ -27,6 +27,7 @@
         /* Mobile Menu Transition */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
@@ -95,6 +96,16 @@
             } catch (e) { console.error(e); }
         }
         fetchPinterest();
+
+        
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
     </script>
 </body>
-</html>
