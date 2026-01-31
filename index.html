@@ -129,11 +129,9 @@
     <footer class="p-12 text-center text-xs opacity-40 uppercase tracking-widest">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // 1. [즉시 실행 스크립트] - 다른 로직보다 먼저 스킵 여부 판단
         (function() {
             const skip = sessionStorage.getItem('skipIntro');
             if (skip === 'true') {
-                // 스타일 태그를 생성해 인트로를 강제로 숨김 (가장 빠른 방법)
                 const style = document.createElement('style');
                 style.innerHTML = '#video-greeting { display: none !important; } body { overflow: auto !important; }';
                 document.head.appendChild(style);
@@ -155,7 +153,6 @@
             if (window.skipApplied) {
                 document.body.classList.remove('no-scroll');
                 if (heroVideo) heroVideo.play();
-                // 사용 후 제거하여 새로고침 시에는 영상이 나오게 함
                 sessionStorage.removeItem('skipIntro');
             }
             loadFeaturedWorks();
@@ -173,7 +170,6 @@
 
         greetingOverlay.addEventListener('dblclick', exitIntro);
         greetingVideo.onended = exitIntro;
-        // 영상 18초 지점 자동 탈출
         greetingVideo.addEventListener('timeupdate', () => { if (greetingVideo.currentTime >= 18) exitIntro(); });
         
         window.onscroll = () => { if (window.scrollY > 500) document.body.classList.add('scrolled'); else document.body.classList.remove('scrolled'); };
