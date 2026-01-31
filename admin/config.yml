@@ -1,6 +1,5 @@
 backend:
-  name: github # 이제 Netlify를 거치지 않고 GitHub로 바로 로그인합니다.
-  repo: sunghwachoy/PETERILLIANT-WEBPAGE
+  name: git-gateway # Netlify 인증을 사용하는 표준 방식입니다.
   branch: main
 
 media_folder: "images/works"
