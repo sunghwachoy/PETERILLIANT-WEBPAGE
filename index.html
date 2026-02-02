@@ -141,51 +141,57 @@
     <footer class="p-12 text-center text-xs opacity-40 uppercase tracking-widest">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        (function() {
-            const skip = sessionStorage.getItem('skipIntro');
-            if (skip === 'true') {
-                const style = document.createElement('style');
-                style.innerHTML = '#video-greeting { display: none !important; } body { overflow: auto !important; }';
-                document.head.appendChild(style);
-                window.skipApplied = true;
-            }
-        })();
-
         const greetingVideo = document.getElementById('greeting-video');
         const greetingOverlay = document.getElementById('video-greeting');
         const heroVideo = document.getElementById('hero-logo-video');
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+        // 1. [핵심] 페이지 로드 즉시 스킵 여부 확인 및 기록 파쇄
+        const shouldSkip = sessionStorage.getItem('skipIntro');
+        
+        if (shouldSkip === 'true') {
+            // 스킵 실행
+            if (greetingOverlay) greetingOverlay.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+            if (heroVideo) heroVideo.play();
+            
+            // [중요] 사용한 스킵 기록은 즉시 삭제! 
+            // 그래야 다음에 '로고'를 눌러 들어올 땐 기록이 없어서 인트로가 나옵니다.
+            sessionStorage.removeItem('skipIntro');
+        }
 
-        let hasExited = window.skipApplied || false;
+        // 2. 메뉴 토글
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+        }
 
-        window.onload = () => {
-            if (window.skipApplied) {
-                document.body.classList.remove('no-scroll');
-                if (heroVideo) heroVideo.play();
-                sessionStorage.removeItem('skipIntro');
-            }
-            loadFeaturedWorks();
-        };
-
+        // 3. 인트로 종료 함수
         const exitIntro = () => { 
-            if (!hasExited) { 
-                hasExited = true; 
+            if (greetingVideo && !greetingVideo.classList.contains('video-fade')) {
                 greetingVideo.classList.add('video-fade'); 
                 greetingOverlay.classList.add('greeting-exit'); 
                 document.body.classList.remove('no-scroll'); 
                 if (heroVideo) heroVideo.play(); 
-            } 
+            }
         };
 
-        greetingOverlay.addEventListener('dblclick', exitIntro);
-        greetingVideo.onended = exitIntro;
-        greetingVideo.addEventListener('timeupdate', () => { if (greetingVideo.currentTime >= 18) exitIntro(); });
+        // 4. 인트로 이벤트 (더블클릭, 종료 시)
+        if (greetingOverlay) greetingOverlay.addEventListener('dblclick', exitIntro);
+        if (greetingVideo) {
+            greetingVideo.onended = exitIntro;
+            greetingVideo.addEventListener('timeupdate', () => { 
+                if (greetingVideo.currentTime >= 18) exitIntro(); 
+            });
+        }
         
-        window.onscroll = () => { if (window.scrollY > 500) document.body.classList.add('scrolled'); else document.body.classList.remove('scrolled'); };
+        // 5. 스크롤 시 다크모드 전환
+        window.onscroll = () => { 
+            if (window.scrollY > 500) document.body.classList.add('scrolled'); 
+            else document.body.classList.remove('scrolled'); 
+        };
 
+        // 6. 작품 로드 함수 (기존 로직 유지)
         async function loadFeaturedWorks() {
             const grid = document.getElementById('featured-grid');
             try {
@@ -205,20 +211,32 @@
                     if (data && data.show_on_main === true) projects.push(data);
                 }
                 projects.sort((a, b) => (a.order || 99) - (b.order || 99));
-                grid.innerHTML = ''; 
-                projects.forEach(data => {
-                    const card = document.createElement('div');
-                    card.className = "project-card";
-                    const videoId = data.media_ref.includes('v=') ? data.media_ref.split('v=')[1].split('&')[0] : data.media_ref.split('/').pop().split('?')[0];
-                    let media = data.media_type === 'YouTube' ? `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allowfullscreen style="width:100%; height:100%; position:absolute;"></iframe>` : `<img src="images/works/${data.media_ref}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
-                    card.innerHTML = `<div class="video-container">${media}</div><div class="p-8"><p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em] mb-2">${data.category}</p><h3 class="text-2xl font-bold uppercase">${data.title}</h3></div>`;
-                    grid.appendChild(card);
-                });
+                if (grid) {
+                    grid.innerHTML = ''; 
+                    projects.forEach(data => {
+                        const card = document.createElement('div');
+                        card.className = "project-card";
+                        const videoId = data.media_ref.includes('v=') ? data.media_ref.split('v=')[1].split('&')[0] : data.media_ref.split('/').pop().split('?')[0];
+                        let media = data.media_type === 'YouTube' ? `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allowfullscreen style="width:100%; height:100%; position:absolute;"></iframe>` : `<img src="images/works/${data.media_ref}" alt="${data.title}" style="width:100%; height:100%; object-fit:cover;">`;
+                        card.innerHTML = `<div class="video-container">${media}</div><div class="p-8"><p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em] mb-2">${data.category}</p><h3 class="text-2xl font-bold uppercase">${data.title}</h3></div>`;
+                        grid.appendChild(card);
+                    });
+                }
             } catch (e) { console.error("Featured error:", e); }
         }
 
-        function copyEmail(button, email) { navigator.clipboard.writeText(email); const hint = document.getElementById('copy-hint'); hint.style.opacity = "1"; setTimeout(() => { hint.style.opacity = "0"; }, 2000); }
+        function copyEmail(button, email) { 
+            navigator.clipboard.writeText(email); 
+            const hint = document.getElementById('copy-hint'); 
+            if (hint) {
+                hint.style.opacity = "1"; 
+                setTimeout(() => { hint.style.opacity = "0"; }, 2000); 
+            }
+        }
         
+        // 초기 실행
+        loadFeaturedWorks();
+
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
                 if (!user) {
