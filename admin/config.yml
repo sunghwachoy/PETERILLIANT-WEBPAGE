@@ -15,7 +15,10 @@ collections:
       - { label: "Project Title", name: "title", widget: "string" }
       - { label: "Category", name: "category", widget: "select", options: ["Motion", "Stills", "Graphics", "Taste"] }
       - { label: "Media Type", name: "media_type", widget: "select", options: ["YouTube", "Image"] }
-      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string" }
+      
+      # [수정] 이 칸을 선택사항(required: false)으로 바꿔서 빨간 경고가 안 뜨게 했습니다.
+      - { label: "YouTube ID or Image Filename", name: "media_ref", widget: "string", required: false }
+      
       - { label: "Publish Date", name: "date", widget: "datetime" }
       - { label: "Display Order", name: "order", widget: "number", default: 10 }
       - { label: "Show on Main Page", name: "show_on_main", widget: "boolean", default: false }
