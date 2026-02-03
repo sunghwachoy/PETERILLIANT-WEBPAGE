@@ -1,5 +1,5 @@
 backend:
-  name: git-gateway # Netlify 인증을 사용하는 표준 방식입니다.
+  name: git-gateway
   branch: main
 
 media_folder: "images/works"
@@ -19,3 +19,15 @@ collections:
       - { label: "Publish Date", name: "date", widget: "datetime" }
       - { label: "Display Order", name: "order", widget: "number", default: 10 }
       - { label: "Show on Main Page", name: "show_on_main", widget: "boolean", default: false }
+      
+      - label: "Stills Images"
+        name: "stills"
+        widget: "list"
+        summary: "{{fields.image}}"
+        field: { label: "Image", name: "image", widget: "image" }
+        required: false
+
+      - label: "Graphics PDF"
+        name: "graphics_pdf"
+        widget: "file"
+        required: false
