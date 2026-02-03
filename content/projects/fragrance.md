@@ -2,7 +2,7 @@
 title: Fragrance
 category: Stills
 media_type: Image
-media_ref: ""
+media_ref: images/works/Frag_1.jpg
 date: 2026-02-04T02:10:00.000+09:00
 order: 10
 show_on_main: false
