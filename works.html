@@ -19,6 +19,7 @@
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
 
+        /* 필터 버튼 스타일 */
         .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
         .filter-btn.active::after {
@@ -27,7 +28,8 @@
             background-color: var(--brand-turquoise); border-radius: 50%;
         }
 
-        .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; }
+        /* 그리드 카드 스타일 */
+        .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; cursor: pointer; }
         .card-media-container {
             width: 100%; height: 300px; overflow: hidden;
             border-radius: 12px; background: #111; position: relative;
@@ -36,7 +38,6 @@
             .card-media-container { height: 450px; } 
         }
 
-        .video-wrapper, .video-wrapper iframe { height: 100%; width: 100%; }
         .work-image-placeholder {
             width: 100%; height: 100%; object-fit: cover; object-position: center;
             transition: all 0.5s ease;
@@ -46,43 +47,58 @@
             filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); 
         }
 
+        /* [중요] Hovering Board (모달) 스타일 */
+        #hovering-board { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.98); z-index: 9999; 
+            display: none; justify-content: center; overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        .board-content { width: 90%; max-width: 1100px; padding: 100px 0; position: relative; }
+        .board-close { 
+            position: fixed; top: 40px; right: 40px; font-size: 40px; 
+            cursor: pointer; z-index: 10000; color: white; opacity: 0.5; 
+            transition: 0.3s; line-height: 1;
+        }
+        .board-close:hover { opacity: 1; color: var(--brand-turquoise); }
+        .board-img { width: 100%; height: auto; margin-bottom: 40px; border-radius: 4px; }
+        .board-video-wrapper { width: 100%; aspect-ratio: 16/9; margin-bottom: 40px; background: #000; }
+        .board-pdf-btn { 
+            display: block; width: fit-content; margin: 60px auto; padding: 18px 45px; 
+            border: 1px solid var(--brand-turquoise); color: var(--brand-turquoise); 
+            font-weight: 900; font-size: 12px; letter-spacing: 0.3em; 
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .board-pdf-btn:hover { background: var(--brand-turquoise); color: black; }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        #mobile-menu { transition: all 0.3s ease; }
+        body.modal-open { overflow: hidden; }
     </style>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
-    <nav class="max-w-7xl mx-auto flex justify-between items-center">
-        <a href="index.html">
-            <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
-        </a>
-        
-        <div class="space-x-8 text-white uppercase text-xs font-bold hidden md:flex">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="index.html">
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+            </a>
             
-            <a href="works.html" class="text-[#40E0D0]">Works</a>
-            <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
-            <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
-            <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
-        </div>
+            <div class="space-x-8 text-white uppercase text-xs font-bold hidden md:flex">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+                <a href="works.html" class="text-[#40E0D0]">Works</a>
+                <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
+                <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
+                <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
+            </div>
 
-        <button id="menu-btn" class="md:hidden text-white focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
-            </svg>
-        </button>
-    </nav>
-
-    <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
-        <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="opacity-50">Home</a>
-        <a href="works.html" class="text-[#40E0D0]">Works</a>
-        <a href="taste.html">Taste</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-    </div>
-</header>
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20 text-left">
         <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works</h1>
@@ -97,16 +113,25 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid"></div>
     </main>
 
+    <div id="hovering-board" onclick="closeBoard()">
+        <span class="board-close" onclick="closeBoard()">&times;</span>
+        <div class="board-content" onclick="event.stopPropagation()">
+            <div id="board-media-container"></div>
+        </div>
+    </div>
+
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
         &copy; 2026 Peterilliant.
     </footer>
 
     <script>
+        let allProjects = [];
+
+        // 메뉴 토글
         const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
         if(menuBtn) {
             menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+                // 모바일 메뉴 로직 필요 시 추가
             });
         }
 
@@ -121,63 +146,102 @@
                 const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects?t=${new Date().getTime()}`;
                 
                 const repoResponse = await fetch(repoUrl);
-                if (!repoResponse.ok) throw new Error('GitHub 연결 실패');
-                
                 const files = await repoResponse.json();
                 
-                // 데이터를 담을 배열 생성
-                let projectDataList = [];
+                allProjects = []; 
 
                 for (const file of files) {
                     if (!file.name.endsWith('.md')) continue;
                     const response = await fetch(file.download_url);
                     const text = await response.text();
-                    const parts = text.split('---');
-                    const yamlContent = parts.find(p => p.includes('title:'));
-                    if (!yamlContent) continue;
-                    
+                    const yamlContent = text.split('---')[1];
                     const data = jsyaml.load(yamlContent);
-                    projectDataList.push(data);
+                    if (data && data.category !== 'Taste') allProjects.push(data);
                 }
 
-                // [중요] Admin에서 설정한 order 값에 따라 정렬 (작은 숫자가 위로)
-                projectDataList.sort((a, b) => (a.order || 99) - (b.order || 99));
+                allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
+                renderGrid();
 
-                grid.innerHTML = ''; 
-
-                projectDataList.forEach(data => {
-                    const card = document.createElement('div');
-                    const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
-                    card.className = `work-card ${categoryValue}`;
-                    
-                    let mediaHTML = '';
-                    if (data.media_type === 'YouTube') {
-                        const cleanId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
-                        mediaHTML = `<div class="video-wrapper"><iframe src="https://www.youtube.com/embed/${cleanId}?rel=0" frameborder="0" allowfullscreen></iframe></div>`;
-                    } else {
-                        mediaHTML = `<img src="images/works/${data.media_ref}" class="work-image-placeholder">`;
-                    }
-
-                    card.innerHTML = `
-                        <div class="card-media-container shadow-2xl">${mediaHTML}</div>
-                        <div class="mt-5 px-1">
-                            <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">${data.category}</p>
-                            <h3 class="text-lg font-black uppercase">${data.title}</h3>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
             } catch (e) { 
-                console.error("최종 에러:", e);
+                console.error("로드 에러:", e);
                 grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
             }
         }
 
+        function renderGrid() {
+            const grid = document.getElementById('works-grid');
+            grid.innerHTML = ''; 
+
+            allProjects.forEach((data, index) => {
+                const card = document.createElement('div');
+                const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
+                card.className = `work-card ${categoryValue}`;
+                card.onclick = () => openBoard(index);
+                
+                let thumbSrc = '';
+                if (data.media_type === 'YouTube') {
+                    const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
+                    thumbSrc = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                } else {
+                    const fileName = data.media_ref.split('/').pop();
+                    thumbSrc = `images/works/${fileName}`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-media-container shadow-2xl">
+                        <img src="${thumbSrc}" class="work-image-placeholder" onerror="this.src='images/works/Frag_1.jpg'">
+                    </div>
+                    <div class="mt-5 px-1">
+                        <p class="text-[9px] text-[#40E0D0] font-black uppercase tracking-[0.2em]">${data.category}</p>
+                        <h3 class="text-lg font-black uppercase">${data.title}</h3>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openBoard(index) {
+            const data = allProjects[index];
+            const container = document.getElementById('board-media-container');
+            container.innerHTML = '';
+            
+            // 1. YouTube 처리 (Motion 등)
+            if (data.media_type === 'YouTube') {
+                const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
+                container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
+            } 
+            // 2. Fragrance 전용 수동 로드 (사용자님의 사투 로직)
+            else if (data.title && data.title.toLowerCase().includes('fragrance')) {
+                ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
+                    container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
+                });
+            } 
+            // 3. 일반 Stills/Graphics (Admin 데이터 기반)
+            else if (data.stills && data.stills.length > 0) {
+                data.stills.forEach(s => {
+                    const sImg = s.image.split('/').pop();
+                    container.innerHTML += `<img src="images/works/${sImg}" class="board-img">`;
+                });
+            }
+
+            // PDF 버튼 (Graphics 등)
+            if (data.graphics_pdf) {
+                container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
+            }
+
+            document.getElementById('hovering-board').style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+
+        function closeBoard() {
+            document.getElementById('board-media-container').innerHTML = ''; 
+            document.getElementById('hovering-board').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+
         function filterWorks(category) {
             const cards = document.querySelectorAll('.work-card');
-            const buttons = document.querySelectorAll('.filter-btn');
-            
-            buttons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById(category + '-btn');
             if (activeBtn) activeBtn.classList.add('active');
 
@@ -191,17 +255,6 @@
         }
 
         window.onload = loadCMSWorks;
-
-       
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                    });
-                }
-            });
-        }
     </script>
 </body>
 </html>
