@@ -19,7 +19,6 @@
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
 
-        /* 필터 버튼 스타일 */
         .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
         .filter-btn.active::after {
@@ -28,7 +27,6 @@
             background-color: var(--brand-turquoise); border-radius: 50%;
         }
 
-        /* 그리드 카드 스타일 */
         .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; cursor: pointer; }
         .card-media-container {
             width: 100%; height: 300px; overflow: hidden;
@@ -47,7 +45,6 @@
             filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); 
         }
 
-        /* [중요] Hovering Board (모달) 스타일 */
         #hovering-board { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.98); z-index: 9999; 
@@ -75,7 +72,6 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         body.modal-open { overflow: hidden; }
     </style>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
@@ -101,7 +97,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20 text-left">
-        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works</h1>
+        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works Final</h1>
 
         <div class="flex justify-start space-x-12 mb-20 text-[11px] font-black uppercase tracking-[0.4em] overflow-x-auto pb-4 no-scrollbar">
             <button onclick="filterWorks('all')" class="filter-btn active" id="all-btn">All</button>
@@ -125,79 +121,39 @@
     </footer>
 
     <script>
-        let allProjects = [];
-
-        // 메뉴 토글
-        const menuBtn = document.getElementById('menu-btn');
-        if(menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                // 모바일 메뉴 로직 필요 시 추가
-            });
-        }
-
-        async function loadCMSWorks() {
-            const grid = document.getElementById('works-grid');
-            if(!grid) return;
-            grid.innerHTML = '<p class="opacity-50 uppercase text-[10px] tracking-widest">Loading Projects...</p>';
-            
-            try {
-                const username = 'sunghwachoy'; 
-                const repo = 'PETERILLIANT-WEBPAGE'; 
-                const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects?t=${new Date().getTime()}`;
-                
-                const repoResponse = await fetch(repoUrl);
-                if (!repoResponse.ok) throw new Error("GitHub 연결 실패");
-                const files = await repoResponse.json();
-                
-                allProjects = []; 
-
-                for (const file of files) {
-                    if (!file.name.endsWith('.md')) continue;
-
-                    // [핵심] 개별 파일마다 try-catch를 걸어서 하나가 죽어도 나머지는 살립니다.
-                    try {
-                        const response = await fetch(file.download_url);
-                        if (!response.ok) continue;
-                        
-                        const text = await response.text();
-                        const parts = text.split('---');
-                        if (parts.length < 2) continue; // 내용물 없으면 버림
-
-                        const yamlContent = parts[1];
-                        let data;
-                        try {
-                            data = jsyaml.load(yamlContent);
-                        } catch (e) {
-                            console.error("YAML 해석 실패:", file.name);
-                            continue; 
-                        }
-                        
-                        // 데이터가 존재하고 타이틀이 있는 경우만 목록에 추가
-                        if (data && data.title) {
-                            if (data.category !== 'Taste') {
-                                allProjects.push(data);
-                            }
-                        }
-                    } catch (individualError) {
-                        // 깨진 파일이 발견되면 콘솔에 이름만 찍고 다음으로 넘어갑니다.
-                        console.warn(`파일 깨짐 건너뜀 (${file.name}):`, individualError);
-                        continue;
-                    }
-                }
-
-                // 무사히 불러온 것들만 모아서 정렬하고 화면에 뿌리기
-                allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
-                renderGrid();
-
-            } catch (e) { 
-                console.error("전체 로드 에러:", e);
-                grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
+        // 작품 데이터를 실제 파일 구조에 맞게 수동 업데이트했습니다.
+        let allProjects = [
+            {
+                title: "Fragrance",
+                category: "Stills",
+                media_type: "Image",
+                media_ref: "Frag_1.jpg",
+                order: 1,
+                stills: ["Frag_1.jpg", "Frag_2.jpg", "Frag_3.jpg", "Frag_5.jpg", "Frag_6.jpg", "Frag_7.jpg"]
+            },
+            {
+                title: "Motion Portfolio",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "https://www.youtube.com/watch?v=kYv_8E4Vz48", 
+                order: 2
+            },
+            {
+                title: "Graphic Design Project",
+                category: "Graphics",
+                media_type: "Image",
+                media_ref: "Frag_1.jpg",
+                graphics_pdf: "https://indd.adobe.com/view/c76f5a91-4dc7-436c-9ece-2e85e07cc55b",
+                order: 3
             }
-        }
+        ];
 
         function renderGrid() {
             const grid = document.getElementById('works-grid');
+            if(!grid) return;
             grid.innerHTML = ''; 
+
+            allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
 
             allProjects.forEach((data, index) => {
                 const card = document.createElement('div');
@@ -232,28 +188,25 @@
             const container = document.getElementById('board-media-container');
             container.innerHTML = '';
             
-            // 1. YouTube 처리 (Motion 등)
             if (data.media_type === 'YouTube') {
                 const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
                 container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
             } 
-            // 2. Fragrance 전용 수동 로드 (사용자님의 사투 로직)
             else if (data.title && data.title.toLowerCase().includes('fragrance')) {
                 ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
                     container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
                 });
             } 
-            // 3. 일반 Stills/Graphics (Admin 데이터 기반)
             else if (data.stills && data.stills.length > 0) {
                 data.stills.forEach(s => {
-                    const sImg = s.image.split('/').pop();
+                    const sImg = typeof s === 'string' ? s.split('/').pop() : s.image.split('/').pop();
                     container.innerHTML += `<img src="images/works/${sImg}" class="board-img">`;
                 });
             }
 
-            // PDF 버튼 (Graphics 등)
-            if (data.graphics_pdf) 
-                {container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;}
+            if (data.graphics_pdf) {
+                container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
+            }
 
             document.getElementById('hovering-board').style.display = 'flex';
             document.body.classList.add('modal-open');
@@ -280,7 +233,8 @@
             });
         }
 
-        window.onload = loadCMSWorks;
+        // 초기화
+        renderGrid();
     </script>
 </body>
 </html>
