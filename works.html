@@ -121,7 +121,6 @@
     </footer>
 
     <script>
-        // 작품 데이터를 실제 파일 구조에 맞게 수동 업데이트했습니다.
         let allProjects = [
             {
                 title: "Fragrance",
@@ -157,6 +156,7 @@
 
             allProjects.forEach((data, index) => {
                 const card = document.createElement('div');
+                // 카테고리 비교 시 대소문자 문제 방지
                 const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
                 card.className = `work-card ${categoryValue}`;
                 card.onclick = () => openBoard(index);
@@ -188,11 +188,14 @@
             const container = document.getElementById('board-media-container');
             container.innerHTML = '';
             
+            // 1. 미디어 출력 로직 (유튜브 또는 이미지 업로드 로직 유지)
             if (data.media_type === 'YouTube') {
                 const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
-                container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
+                container.innerHTML += `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
             } 
-            else if (data.title && data.title.toLowerCase().includes('fragrance')) {
+            
+            // 향수 전용 또는 일반 이미지 리스트 로직 (사용자님의 기존 로직 그대로 보존)
+            if (data.title && data.title.toLowerCase().includes('fragrance')) {
                 ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
                     container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
                 });
@@ -203,7 +206,13 @@
                     container.innerHTML += `<img src="images/works/${sImg}" class="board-img">`;
                 });
             }
+            else if (data.media_type === 'Image') {
+                // 단일 이미지 업로드 로직
+                const fileName = data.media_ref.split('/').pop();
+                container.innerHTML += `<img src="images/works/${fileName}" class="board-img">`;
+            }
 
+            // 2. 외부 링크(Adobe PDF) 버튼 추가 로직 (이미지 아래에 추가됨)
             if (data.graphics_pdf) {
                 container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
             }
@@ -233,7 +242,6 @@
             });
         }
 
-        // 초기화
         renderGrid();
     </script>
 </body>
