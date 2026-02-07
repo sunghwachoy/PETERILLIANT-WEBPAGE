@@ -77,35 +77,40 @@
         }
 
         async function fetchPinterest() {
-            const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss`;
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
-            try {
-                const res = await fetch(api_url); 
-                const data = await res.json();
-                const grid = document.getElementById('pinterest-grid'); 
-                const loading = document.getElementById('loading');
-                
-                if (loading) loading.style.display = 'none';
-                
-                if (data.items) {
-                    data.items.forEach(item => {
-                        const imgMatch = item.description.match(/src="([^"]+)"/);
-                        let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
-                        if (src) {
-                            const card = document.createElement('div'); 
-                            card.className = 'masonry-item';
-                            card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
-                            grid.appendChild(card);
-                        }
-                    });
+    const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss`;
+    // 뒤에 t=${new Date().getTime()}을 붙여서 캐싱을 강제로 깨버립니다.
+    const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&t=${new Date().getTime()}`;
+    
+    try {
+        const res = await fetch(api_url); 
+        const data = await res.json();
+        const grid = document.getElementById('pinterest-grid'); 
+        const loading = document.getElementById('loading');
+        
+        if (loading) loading.style.display = 'none';
+        if (!grid) return;
+
+        grid.innerHTML = ''; // 기존에 떠있던 옛날 이미지 싹 다 밀어버리기
+
+        if (data.items && data.items.length > 0) {
+            data.items.forEach(item => {
+                const imgMatch = item.description.match(/src="([^"]+)"/);
+                let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
+                if (src) {
+                    const card = document.createElement('div'); 
+                    card.className = 'masonry-item';
+                    card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
+                    grid.appendChild(card);
                 }
-            } catch (e) { 
-                console.error(e);
-                if (document.getElementById('loading')) {
-                    document.getElementById('loading').innerHTML = "<p class='text-xs opacity-50'>Failed to load Pinterest feed.</p>";
-                }
-            }
+            });
+        } else {
+            console.log("No new items found yet.");
         }
+    } catch (e) { 
+        console.error(e);
+    }
+}
+        
         fetchPinterest();
 
         if (window.netlifyIdentity) {
