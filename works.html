@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Works - Peterilliant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
@@ -18,7 +17,6 @@
             overflow-x: hidden;
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
-
         .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
         .filter-btn.active::after {
@@ -26,25 +24,14 @@
             transform: translateX(-50%); width: 4px; height: 4px; 
             background-color: var(--brand-turquoise); border-radius: 50%;
         }
-
         .work-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: block; cursor: pointer; }
         .card-media-container {
             width: 100%; height: 300px; overflow: hidden;
             border-radius: 12px; background: #111; position: relative;
         }
-        @media (min-width: 768px) {
-            .card-media-container { height: 450px; } 
-        }
-
-        .work-image-placeholder {
-            width: 100%; height: 100%; object-fit: cover; object-position: center;
-            transition: all 0.5s ease;
-        }
-
-        .work-card:hover .work-image-placeholder { 
-            filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); 
-        }
-
+        @media (min-width: 768px) { .card-media-container { height: 450px; } }
+        .work-image-placeholder { width: 100%; height: 100%; object-fit: cover; transition: 0.5s ease; }
+        .work-card:hover .work-image-placeholder { filter: grayscale(100%); opacity: 0.6; transform: scale(1.03); }
         #hovering-board { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.98); z-index: 9999; 
@@ -52,11 +39,7 @@
             backdrop-filter: blur(10px);
         }
         .board-content { width: 90%; max-width: 1100px; padding: 100px 0; position: relative; }
-        .board-close { 
-            position: fixed; top: 40px; right: 40px; font-size: 40px; 
-            cursor: pointer; z-index: 10000; color: white; opacity: 0.5; 
-            transition: 0.3s; line-height: 1;
-        }
+        .board-close { position: fixed; top: 40px; right: 40px; font-size: 40px; cursor: pointer; z-index: 10000; color: white; opacity: 0.5; transition: 0.3s; }
         .board-close:hover { opacity: 1; color: var(--brand-turquoise); }
         .board-img { width: 100%; height: auto; margin-bottom: 40px; border-radius: 4px; }
         .board-video-wrapper { width: 100%; aspect-ratio: 16/9; margin-bottom: 40px; background: #000; }
@@ -64,48 +47,35 @@
             display: block; width: fit-content; margin: 60px auto; padding: 18px 45px; 
             border: 1px solid var(--brand-turquoise); color: var(--brand-turquoise); 
             font-weight: 900; font-size: 12px; letter-spacing: 0.3em; 
-            transition: 0.3s; text-transform: uppercase;
+            transition: 0.3s; text-transform: uppercase; text-decoration: none;
         }
         .board-pdf-btn:hover { background: var(--brand-turquoise); color: black; }
-
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         body.modal-open { overflow: hidden; }
     </style>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
-            </a>
-            
+            <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
             <div class="space-x-8 text-white uppercase text-xs font-bold hidden md:flex">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+                <a href="index.html" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="text-[#40E0D0]">Works</a>
                 <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
                 <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
                 <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
             </div>
-
-            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
-                </svg>
-            </button>
         </nav>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20 text-left">
-        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works Final</h1>
-
+        <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter">Works</h1>
         <div class="flex justify-start space-x-12 mb-20 text-[11px] font-black uppercase tracking-[0.4em] overflow-x-auto pb-4 no-scrollbar">
             <button onclick="filterWorks('all')" class="filter-btn active" id="all-btn">All</button>
             <button onclick="filterWorks('motion')" class="filter-btn" id="motion-btn">Motion</button>
             <button onclick="filterWorks('stills')" class="filter-btn" id="stills-btn">Stills</button>
             <button onclick="filterWorks('graphics')" class="filter-btn" id="graphics-btn">Graphics</button>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid"></div>
     </main>
 
@@ -116,47 +86,43 @@
         </div>
     </div>
 
-    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
-        &copy; 2026 Peterilliant.
-    </footer>
-
     <script>
-        // 사용자님이 원하셨던 유튜브 3개와 나머지 데이터 구조를 유지합니다.
+        // 사용자님이 직접 긁어오신 진짜 데이터 100% 반영
         let allProjects = [
+            {
+                title: "AirPods pro3 X Zootopia 2 Concept AD",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "b9d9R1PL2Bo",
+                order: 1
+            },
+            {
+                title: "Superegg concept work",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "Kph_BC-W22w",
+                order: 2
+            },
+            {
+                title: "Hwayo",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "RWHfIuJJ3H0",
+                order: 3
+            },
             {
                 title: "Fragrance",
                 category: "Stills",
                 media_type: "Image",
                 media_ref: "Frag_1.jpg",
-                order: 1,
+                order: 4,
                 stills: ["Frag_1.jpg", "Frag_2.jpg", "Frag_3.jpg", "Frag_5.jpg", "Frag_6.jpg", "Frag_7.jpg"]
-            },
-            {
-                title: "Motion Portfolio 1",
-                category: "Motion",
-                media_type: "YouTube",
-                media_ref: "https://www.youtube.com/watch?v=kYv_8E4Vz48", 
-                order: 2
-            },
-            {
-                title: "Motion Portfolio 2",
-                category: "Motion",
-                media_type: "YouTube",
-                media_ref: "https://www.youtube.com/watch?v=N679B-N5Rz0", 
-                order: 3
-            },
-            {
-                title: "Motion Portfolio 3",
-                category: "Motion",
-                media_type: "YouTube",
-                media_ref: "https://www.youtube.com/watch?v=0kH81u1-M_Q", 
-                order: 4
             },
             {
                 title: "Graphic Design Project",
                 category: "Graphics",
                 media_type: "Image",
-                media_ref: "images/works/Frag_1.jpg",
+                media_ref: "Frag_1.jpg",
                 graphics_pdf: "https://indd.adobe.com/view/c76f5a91-4dc7-436c-9ece-2e85e07cc55b",
                 order: 5
             }
@@ -166,22 +132,17 @@
             const grid = document.getElementById('works-grid');
             if(!grid) return;
             grid.innerHTML = ''; 
-
-            allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
-
+            allProjects.sort((a, b) => a.order - b.order);
             allProjects.forEach((data, index) => {
                 const card = document.createElement('div');
-                const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
-                card.className = `work-card ${categoryValue}`;
+                card.className = `work-card ${data.category.toLowerCase()}`;
                 card.onclick = () => openBoard(index);
                 
                 let thumbSrc = '';
                 if (data.media_type === 'YouTube') {
-                    const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
-                    thumbSrc = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                    thumbSrc = `https://img.youtube.com/vi/${data.media_ref}/maxresdefault.jpg`;
                 } else {
-                    const fileName = data.media_ref.split('/').pop();
-                    thumbSrc = `images/works/${fileName}`;
+                    thumbSrc = `images/works/${data.media_ref.split('/').pop()}`;
                 }
 
                 card.innerHTML = `
@@ -202,29 +163,18 @@
             const container = document.getElementById('board-media-container');
             container.innerHTML = '';
             
-            // 1. 영상 로직
             if (data.media_type === 'YouTube') {
-                const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
-                container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
+                container.innerHTML += `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${data.media_ref}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
             } 
-            // 2. 이미지 로직 (Fragrance 및 기타 스틸컷)
-            if (data.title && data.title.toLowerCase().includes('fragrance')) {
-                ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
+            
+            if (data.title === 'Fragrance') {
+                data.stills.forEach(img => {
                     container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
                 });
-            } 
-            else if (data.stills && data.stills.length > 0) {
-                data.stills.forEach(s => {
-                    const sImg = typeof s === 'string' ? s.split('/').pop() : s.image.split('/').pop();
-                    container.innerHTML += `<img src="images/works/${sImg}" class="board-img">`;
-                });
-            }
-            else if (data.media_type === 'Image') {
-                const fileName = data.media_ref.split('/').pop();
-                container.innerHTML += `<img src="images/works/${fileName}" class="board-img">`;
+            } else if (data.media_type === 'Image') {
+                container.innerHTML += `<img src="images/works/${data.media_ref.split('/').pop()}" class="board-img">`;
             }
 
-            // 3. PDF 버튼 로직 (if로 분리하여 이미지와 공존 가능하게 함)
             if (data.graphics_pdf) {
                 container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
             }
@@ -242,18 +192,11 @@
         function filterWorks(category) {
             const cards = document.querySelectorAll('.work-card');
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById(category + '-btn');
-            if (activeBtn) activeBtn.classList.add('active');
-
+            document.getElementById(category + '-btn').classList.add('active');
             cards.forEach(card => {
-                if (category === 'all' || card.classList.contains(category.toLowerCase())) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (category === 'all' || card.classList.contains(category)) ? 'block' : 'none';
             });
         }
-
         window.onload = renderGrid;
     </script>
 </body>
