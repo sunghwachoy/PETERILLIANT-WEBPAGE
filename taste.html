@@ -75,19 +75,18 @@
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // 1. YouTube 플레이리스트 자동 로드
-        async function fetchYoutubeVideos() {
+        // 1. 유튜브 로직 (RSS2JSON 사용)
+        async function fetchYoutube() {
             const grid = document.getElementById('video-grid');
             const loader = document.getElementById('loading-videos');
             const playlistId = 'PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1';
             const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&t=${Date.now()}`;
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_=${Date.now()}`;
 
             try {
                 const res = await fetch(api_url);
                 const data = await res.json();
                 if (loader) loader.style.display = 'none';
-
                 if (data.items) {
                     data.items.forEach(item => {
                         const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
@@ -98,14 +97,11 @@
                         grid.appendChild(card);
                     });
                 }
-            } catch (e) {
-                console.error("YouTube Error:", e);
-                if (loader) loader.style.display = 'none';
-            }
+            } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
-        // 2. Pinterest Graphics 보드 자동 로드 (AllOrigins 프록시 우회)
-        async function fetchPinterestGraphics() {
+        // 2. 핀터레스트 로직 (AllOrigins 우회 + XML 직접 파싱)
+        async function fetchPinterest() {
             const grid = document.getElementById('graphics-grid');
             const loader = document.getElementById('loading-graphics');
             const feedUrl = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
@@ -124,7 +120,6 @@
                 items.forEach(item => {
                     const link = item.querySelector("link").textContent;
                     const description = item.querySelector("description").textContent;
-                    
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = description;
                     const imgTag = tempDiv.querySelector('img');
@@ -134,22 +129,15 @@
                         src = src.replace('236x', 'originals').replace('736x', 'originals');
                         const card = document.createElement('div');
                         card.className = 'taste-item';
-                        card.innerHTML = `
-                            <a href="${link}" target="_blank">
-                                <img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'">
-                            </a>`;
+                        card.innerHTML = `<a href="${link}" target="_blank"><img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'"></a>`;
                         grid.appendChild(card);
                     }
                 });
-            } catch (e) {
-                console.error("Pinterest Error:", e);
-                if (loader) loader.style.display = 'none';
-            }
+            } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
         function openBoard(id) {
-            const container = document.getElementById('board-media-container');
-            container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
+            document.getElementById('board-media-container').innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
             document.getElementById('hovering-board').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
@@ -161,8 +149,8 @@
         }
 
         window.onload = () => {
-            fetchYoutubeVideos();
-            fetchPinterestGraphics();
+            fetchYoutube();
+            fetchPinterest();
         };
     </script>
 </body>
