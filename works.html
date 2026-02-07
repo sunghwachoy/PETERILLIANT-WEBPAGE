@@ -164,7 +164,13 @@
                         if (parts.length < 2) continue; // 내용물 없으면 버림
 
                         const yamlContent = parts[1];
-                        const data = jsyaml.load(yamlContent);
+                        let data;
+                        try {
+                            data = jsyaml.load(yamlContent);
+                        } catch (e) {
+                            console.error("YAML 해석 실패:", file.name);
+                            continue; 
+                        }
                         
                         // 데이터가 존재하고 타이틀이 있는 경우만 목록에 추가
                         if (data && data.title) {
