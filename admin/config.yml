@@ -27,10 +27,7 @@ collections:
           - { label: "Image", name: "image", widget: "image" }
         required: false
 
-      - label: "Graphics PDF"
-        name: "graphics_pdf"
-        widget: "file"
-        required: false
+      - { label: "Graphics PDF Link", name: "graphics_pdf", widget: "string", required: false, hint: "Adobe Publish Online https://indd.adobe.com/view/c76f5a91-4dc7-436c-9ece-2e85e07cc55b" }
 
       - label: "Taste Images"
         name: "taste_images"

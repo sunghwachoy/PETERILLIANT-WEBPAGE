@@ -225,9 +225,8 @@
             }
 
             // PDF 버튼 (Graphics 등)
-            if (data.graphics_pdf) {
-                container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
-            }
+            if (data.graphics_pdf) 
+                {container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;}
 
             document.getElementById('hovering-board').style.display = 'flex';
             document.body.classList.add('modal-open');
