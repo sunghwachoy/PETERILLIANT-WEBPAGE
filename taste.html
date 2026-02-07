@@ -72,39 +72,32 @@
 
     <script>
         function showSection(type) {
-            const vSec = document.getElementById('videos-section');
-            const gSec = document.getElementById('graphics-section');
-            const vGrid = document.getElementById('video-grid');
-            const gGrid = document.getElementById('graphics-grid');
-            const vBtn = document.getElementById('btn-videos');
-            const gBtn = document.getElementById('btn-graphics');
+            const sections = { videos: ['videos-section', 'video-grid', 'btn-videos'], graphics: ['graphics-section', 'graphics-grid', 'btn-graphics'] };
+            const active = type === 'videos' ? sections.videos : sections.graphics;
+            const inactive = type === 'videos' ? sections.graphics : sections.videos;
 
-            if (type === 'videos') {
-                vSec.classList.remove('hidden'); gSec.classList.add('hidden');
-                vGrid.classList.add('active'); gGrid.classList.remove('active');
-                vBtn.classList.add('active'); gBtn.classList.remove('active');
-            } else {
-                vSec.classList.add('hidden'); gSec.classList.remove('hidden');
-                vGrid.classList.remove('active'); gGrid.classList.add('active');
-                vBtn.classList.remove('active'); gBtn.classList.add('active');
-            }
+            document.getElementById(active[0]).classList.remove('hidden');
+            document.getElementById(active[1]).classList.add('active');
+            document.getElementById(active[2]).classList.add('active');
+
+            document.getElementById(inactive[0]).classList.add('hidden');
+            document.getElementById(inactive[1]).classList.remove('active');
+            document.getElementById(inactive[2]).classList.remove('active');
         }
 
-        // 1. 유튜브 로직 보강
         async function fetchYoutube() {
             const grid = document.getElementById('video-grid');
             const loader = document.getElementById('loading-videos');
-            const playlistId = 'PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1';
+            // 새 플레이리스트 ID 적용됨
+            const playlistId = 'PLxzd-BVdaE30-tOmpD7tJuZ8qEOOkKjnM';
             const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-            
-            // 캐시를 완전히 무시하도록 강력한 랜덤 파라미터 추가
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&nocache=${Math.random()}`;
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_=${Date.now()}`;
 
             try {
                 const res = await fetch(api_url);
                 const data = await res.json();
                 if (loader) loader.style.display = 'none';
-                if (data.status === 'ok' && data.items) {
+                if (data.items) {
                     grid.innerHTML = '';
                     data.items.forEach(item => {
                         const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
@@ -118,14 +111,11 @@
             } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
-        // 2. 핀터레스트 로직 보강
         async function fetchPinterest() {
             const grid = document.getElementById('graphics-grid');
             const loader = document.getElementById('loading-graphics');
             const feedUrl = "https://www.pinterest.com/sunghwapeter/graphic.rss";
-            
-            // AllOrigins 프록시의 자체 캐시를 깨기 위해 랜덤 값 추가
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&timestamp=${Date.now()}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&_=${Date.now()}`;
 
             try {
                 const response = await fetch(proxyUrl);
@@ -133,10 +123,8 @@
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data.contents, "text/xml");
                 const items = xmlDoc.querySelectorAll("item");
-
                 if (loader) loader.style.display = 'none';
                 grid.innerHTML = '';
-
                 items.forEach(item => {
                     const link = item.querySelector("link").textContent;
                     const description = item.querySelector("description").textContent;
@@ -144,7 +132,6 @@
                     tempDiv.innerHTML = description;
                     const imgTag = tempDiv.querySelector('img');
                     let src = imgTag ? imgTag.getAttribute('src') : "";
-
                     if (src) {
                         src = src.replace('236x', 'originals').replace('736x', 'originals');
                         const card = document.createElement('div');
@@ -156,26 +143,29 @@
             } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
-        // 3. 실행 시점 보강: 페이지가 조금이라도 준비되면 바로 실행
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => { fetchYoutube(); fetchPinterest(); });
-        } else {
-            fetchYoutube();
-            fetchPinterest();
-        }
-
         function openBoard(id) {
             document.getElementById('board-media-container').innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
             document.getElementById('hovering-board').style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
+
         function closeBoard() {
             document.getElementById('board-media-container').innerHTML = '';
             document.getElementById('hovering-board').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
-        window.onload = () => { fetchYoutube(); fetchPinterest(); };
+        // 실행 시점 최적화: 새로고침 없이 바로 뜨게 함
+        function init() {
+            fetchYoutube();
+            fetchPinterest();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
