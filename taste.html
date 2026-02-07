@@ -72,13 +72,17 @@
         </div>
     </div>
 
+    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
+
     <script>
-        // 공통 데이터 호출 함수 (rss2json 이용)
-        async function fetchRSS(url, gridId, loaderId, type) {
-            const grid = document.getElementById(gridId);
-            const loader = document.getElementById(loaderId);
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&cachebuster=${Date.now()}`;
-            
+        // 1. YouTube 플레이리스트 자동 로드
+        async function fetchYoutubeVideos() {
+            const grid = document.getElementById('video-grid');
+            const loader = document.getElementById('loading-videos');
+            const playlistId = 'PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1';
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&t=${Date.now()}`;
+
             try {
                 const res = await fetch(api_url);
                 const data = await res.json();
@@ -86,27 +90,59 @@
 
                 if (data.items) {
                     data.items.forEach(item => {
+                        const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
                         const card = document.createElement('div');
                         card.className = 'taste-item';
-                        
-                        if (type === 'video') {
-                            // 유튜브 RSS에서 비디오 ID 추출 (yt:videoId 태그 또는 링크 이용)
-                            const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
-                            card.onclick = () => openBoard(videoId);
-                            card.innerHTML = `<img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'">`;
-                        } else {
-                            // 핀터레스트 이미지 추출 및 고화질화
-                            let src = item.enclosure?.link || (item.description.match(/src="([^"]+)"/) || [])[1];
-                            if (src) {
-                                src = src.replace('236x', 'originals').replace('736x', 'originals');
-                                card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'"></a>`;
-                            }
-                        }
+                        card.onclick = () => openBoard(videoId);
+                        card.innerHTML = `<img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'">`;
                         grid.appendChild(card);
                     });
                 }
             } catch (e) {
-                console.error(e);
+                console.error("YouTube Error:", e);
+                if (loader) loader.style.display = 'none';
+            }
+        }
+
+        // 2. Pinterest Graphics 보드 자동 로드 (AllOrigins 프록시 우회)
+        async function fetchPinterestGraphics() {
+            const grid = document.getElementById('graphics-grid');
+            const loader = document.getElementById('loading-graphics');
+            const feedUrl = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&_=${Date.now()}`;
+
+            try {
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+                const items = xmlDoc.querySelectorAll("item");
+
+                if (loader) loader.style.display = 'none';
+                grid.innerHTML = '';
+
+                items.forEach(item => {
+                    const link = item.querySelector("link").textContent;
+                    const description = item.querySelector("description").textContent;
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = description;
+                    const imgTag = tempDiv.querySelector('img');
+                    let src = imgTag ? imgTag.getAttribute('src') : "";
+
+                    if (src) {
+                        src = src.replace('236x', 'originals').replace('736x', 'originals');
+                        const card = document.createElement('div');
+                        card.className = 'taste-item';
+                        card.innerHTML = `
+                            <a href="${link}" target="_blank">
+                                <img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'">
+                            </a>`;
+                        grid.appendChild(card);
+                    }
+                });
+            } catch (e) {
+                console.error("Pinterest Error:", e);
                 if (loader) loader.style.display = 'none';
             }
         }
@@ -124,13 +160,9 @@
             document.body.style.overflow = 'auto';
         }
 
-        // 실행: 유튜브 플레이리스트 RSS & 핀터레스트 보드 RSS
-        const youtubePlaylistRSS = `https://www.youtube.com/feeds/videos.xml?playlist_id=PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1`;
-        const pinterestBoardRSS = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
-
         window.onload = () => {
-            fetchRSS(youtubePlaylistRSS, 'video-grid', 'loading-videos', 'video');
-            fetchRSS(pinterestBoardRSS, 'graphics-grid', 'loading-graphics', 'graphic');
+            fetchYoutubeVideos();
+            fetchPinterestGraphics();
         };
     </script>
 </body>
