@@ -90,19 +90,21 @@
             }
         }
 
+        // 1. 유튜브 로직 보강
         async function fetchYoutube() {
             const grid = document.getElementById('video-grid');
             const loader = document.getElementById('loading-videos');
             const playlistId = 'PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1';
             const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-            // 캐시 방지를 위해 시간 데이터를 더 강력하게 붙임
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&cache_bust=${new Date().getTime()}`;
+            
+            // 캐시를 완전히 무시하도록 강력한 랜덤 파라미터 추가
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&nocache=${Math.random()}`;
 
             try {
                 const res = await fetch(api_url);
                 const data = await res.json();
                 if (loader) loader.style.display = 'none';
-                if (data.items && data.items.length > 0) {
+                if (data.status === 'ok' && data.items) {
                     grid.innerHTML = '';
                     data.items.forEach(item => {
                         const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
@@ -116,12 +118,14 @@
             } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
+        // 2. 핀터레스트 로직 보강
         async function fetchPinterest() {
             const grid = document.getElementById('graphics-grid');
             const loader = document.getElementById('loading-graphics');
             const feedUrl = "https://www.pinterest.com/sunghwapeter/graphic.rss";
-            // Proxy 서버 캐시 방지
-            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&_=${new Date().getTime()}`;
+            
+            // AllOrigins 프록시의 자체 캐시를 깨기 위해 랜덤 값 추가
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&timestamp=${Date.now()}`;
 
             try {
                 const response = await fetch(proxyUrl);
@@ -129,8 +133,10 @@
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data.contents, "text/xml");
                 const items = xmlDoc.querySelectorAll("item");
+
                 if (loader) loader.style.display = 'none';
                 grid.innerHTML = '';
+
                 items.forEach(item => {
                     const link = item.querySelector("link").textContent;
                     const description = item.querySelector("description").textContent;
@@ -138,6 +144,7 @@
                     tempDiv.innerHTML = description;
                     const imgTag = tempDiv.querySelector('img');
                     let src = imgTag ? imgTag.getAttribute('src') : "";
+
                     if (src) {
                         src = src.replace('236x', 'originals').replace('736x', 'originals');
                         const card = document.createElement('div');
@@ -147,6 +154,14 @@
                     }
                 });
             } catch (e) { if (loader) loader.style.display = 'none'; }
+        }
+
+        // 3. 실행 시점 보강: 페이지가 조금이라도 준비되면 바로 실행
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => { fetchYoutube(); fetchPinterest(); });
+        } else {
+            fetchYoutube();
+            fetchPinterest();
         }
 
         function openBoard(id) {
