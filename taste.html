@@ -66,7 +66,6 @@
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // 모바일 메뉴 제어 로직 (null 에러 방지 처리)
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -77,39 +76,46 @@
         }
 
         async function fetchPinterest() {
-    const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss`;
-    // 뒤에 t=${new Date().getTime()}을 붙여서 캐싱을 강제로 깨버립니다.
-    const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&t=${new Date().getTime()}`;
-    
-    try {
-        const res = await fetch(api_url); 
-        const data = await res.json();
-        const grid = document.getElementById('pinterest-grid'); 
-        const loading = document.getElementById('loading');
-        
-        if (loading) loading.style.display = 'none';
-        if (!grid) return;
+            // 1. feedUrl을 사용자님의 '전체 활동' 피드로 교체
+            const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss/`;
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&cachebuster=${new Date().getTime()}`;
+            
+            try {
+                const res = await fetch(api_url); 
+                const data = await res.json();
+                const grid = document.getElementById('pinterest-grid'); 
+                const loading = document.getElementById('loading');
+                
+                if (loading) loading.style.display = 'none';
+                if (!grid) return;
 
-        grid.innerHTML = ''; // 기존에 떠있던 옛날 이미지 싹 다 밀어버리기
+                grid.innerHTML = ''; 
 
-        if (data.items && data.items.length > 0) {
-            data.items.forEach(item => {
-                const imgMatch = item.description.match(/src="([^"]+)"/);
-                let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
-                if (src) {
-                    const card = document.createElement('div'); 
-                    card.className = 'masonry-item';
-                    card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
-                    grid.appendChild(card);
+                if (data.items && data.items.length > 0) {
+                    data.items.forEach(item => {
+                        // 2. 이미지 추출 로직 강화 (description 뿐만 아니라 enclosure까지 확인)
+                        let src = '';
+                        if (item.enclosure && item.enclosure.link) {
+                            src = item.enclosure.link;
+                        } else {
+                            const imgMatch = item.description.match(/src="([^"]+)"/);
+                            src = imgMatch ? imgMatch[1] : '';
+                        }
+
+                        if (src) {
+                            // 고화질 전환
+                            src = src.replace('236x', 'originals').replace('736x', 'originals');
+                            const card = document.createElement('div'); 
+                            card.className = 'masonry-item';
+                            card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'"></a>`;
+                            grid.appendChild(card);
+                        }
+                    });
                 }
-            });
-        } else {
-            console.log("No new items found yet.");
+            } catch (e) { 
+                console.error("Pinterest Load Error:", e);
+            }
         }
-    } catch (e) { 
-        console.error(e);
-    }
-}
         
         fetchPinterest();
 
