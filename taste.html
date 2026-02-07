@@ -24,7 +24,6 @@
         .loader { border: 2px solid #222; border-top: 2px solid var(--brand-turquoise); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; margin: 100px auto; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Mobile Menu Transition */
         #mobile-menu { transition: all 0.3s ease; }
     </style>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
@@ -33,17 +32,29 @@
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
-            <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
             </a>
         
-         <div class="space-x-8 uppercase text-xs font-bold hidden md:flex">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
-            <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
-            <a href="taste.html" class="text-[#40E0D0]">Taste</a>
-            <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
-            <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
-        </div>
+            <div class="space-x-8 uppercase text-xs font-bold hidden md:flex">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+                <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
+                <a href="taste.html" class="text-[#40E0D0]">Taste</a>
+                <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
+                <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
+            </div>
+
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
         </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-black/95 absolute top-full left-0 w-full p-6 space-y-4 flex flex-col text-center uppercase text-xs font-bold border-b border-white/10">
+            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0]">Back to Home</a>
+            <a href="works.html" class="hover:text-[#40E0D0]">Works</a>
+            <a href="taste.html" class="text-[#40E0D0]">Taste</a>
+            <a href="about.html" class="hover:text-[#40E0D0]">About</a>
+            <a href="contact.html" class="hover:text-[#40E0D0]">Contact</a>
+        </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20">
@@ -55,35 +66,48 @@
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
+        // 모바일 메뉴 제어 로직 (null 에러 방지 처리)
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        // Toggle Mobile Menu
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
         async function fetchPinterest() {
             const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss`;
             const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
             try {
-                const res = await fetch(api_url); const data = await res.json();
+                const res = await fetch(api_url); 
+                const data = await res.json();
                 const grid = document.getElementById('pinterest-grid'); 
-                document.getElementById('loading').style.display = 'none';
-                data.items.forEach(item => {
-                    const imgMatch = item.description.match(/src="([^"]+)"/);
-                    let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
-                    if (src) {
-                        const card = document.createElement('div'); card.className = 'masonry-item';
-                        card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
-                        grid.appendChild(card);
-                    }
-                });
-            } catch (e) { console.error(e); }
+                const loading = document.getElementById('loading');
+                
+                if (loading) loading.style.display = 'none';
+                
+                if (data.items) {
+                    data.items.forEach(item => {
+                        const imgMatch = item.description.match(/src="([^"]+)"/);
+                        let src = imgMatch ? imgMatch[1].replace('236x', 'originals') : '';
+                        if (src) {
+                            const card = document.createElement('div'); 
+                            card.className = 'masonry-item';
+                            card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy"></a>`;
+                            grid.appendChild(card);
+                        }
+                    });
+                }
+            } catch (e) { 
+                console.error(e);
+                if (document.getElementById('loading')) {
+                    document.getElementById('loading').innerHTML = "<p class='text-xs opacity-50'>Failed to load Pinterest feed.</p>";
+                }
+            }
         }
         fetchPinterest();
 
-        
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
                 if (!user) {
@@ -95,3 +119,4 @@
         }
     </script>
 </body>
+</html>
