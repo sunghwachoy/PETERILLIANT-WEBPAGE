@@ -11,23 +11,18 @@
         :root { --brand-turquoise: #40E0D0; }
         body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; cursor: url("images/pointer.png"), auto; scroll-behavior: smooth; }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
-        
         .section-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5em; color: var(--brand-turquoise); margin-bottom: 2rem; border-left: 2px solid var(--brand-turquoise); padding-left: 1rem; }
-
         .masonry-grid { column-count: 2; column-gap: 1.5rem; width: 100%; }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
-
         .taste-item { break-inside: avoid; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: block; background: #111; }
         .taste-item img { width: 100%; transition: 0.5s; display: block; }
         .taste-item:hover img { filter: grayscale(100%); opacity: 0.5; }
         .taste-item:hover { transform: scale(0.98); border-color: var(--brand-turquoise); }
-
         #hovering-board { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .board-content { width: 90%; max-width: 1100px; position: relative; }
         .board-close { position: fixed; top: 40px; right: 40px; font-size: 40px; cursor: pointer; z-index: 10000; color: white; opacity: 0.5; }
         .board-video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; }
-        
         .loader { border: 2px solid #222; border-top: 2px solid var(--brand-turquoise); border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; margin-left: 10px; vertical-align: middle; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
@@ -48,7 +43,6 @@
 
     <main class="max-w-7xl mx-auto px-6 py-20">
         <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter text-left">Taste</h1>
-        
         <div class="flex justify-start space-x-12 mb-20 text-[11px] font-black uppercase tracking-[0.4em]">
             <a href="#videos-section" class="hover:text-[#40E0D0] transition">Videos</a>
             <a href="#graphics-section" class="hover:text-[#40E0D0] transition">Graphics</a>
@@ -72,10 +66,8 @@
         </div>
     </div>
 
-    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
-
     <script>
-        // 1. 유튜브 로직 (RSS2JSON 사용)
+        // 1. 유튜브 로직
         async function fetchYoutube() {
             const grid = document.getElementById('video-grid');
             const loader = document.getElementById('loading-videos');
@@ -88,6 +80,7 @@
                 const data = await res.json();
                 if (loader) loader.style.display = 'none';
                 if (data.items) {
+                    grid.innerHTML = '';
                     data.items.forEach(item => {
                         const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
                         const card = document.createElement('div');
@@ -100,11 +93,12 @@
             } catch (e) { if (loader) loader.style.display = 'none'; }
         }
 
-        // 2. 핀터레스트 로직 (AllOrigins 우회 + XML 직접 파싱)
+        // 2. 핀터레스트 로직 (sunghwapeter 계정 반영)
         async function fetchPinterest() {
             const grid = document.getElementById('graphics-grid');
             const loader = document.getElementById('loading-graphics');
-            const feedUrl = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
+            // 사용자명을 sunghwapeter로 변경
+            const feedUrl = `https://www.pinterest.com/sunghwapeter/graphic.rss`;
             const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&_=${Date.now()}`;
 
             try {
@@ -126,6 +120,7 @@
                     let src = imgTag ? imgTag.getAttribute('src') : "";
 
                     if (src) {
+                        // 고화질 이미지로 변경
                         src = src.replace('236x', 'originals').replace('736x', 'originals');
                         const card = document.createElement('div');
                         card.className = 'taste-item';
