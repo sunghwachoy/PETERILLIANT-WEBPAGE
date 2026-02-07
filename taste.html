@@ -76,8 +76,8 @@
         }
 
         async function fetchPinterest() {
-            // 1. feedUrl을 사용자님의 '전체 활동' 피드로 교체
-            const feedUrl = `https://www.pinterest.com/sunghwachoy/feed.rss/`;
+            // 보드 이름을 'graphic'으로 특정하여 업데이트 속도를 높였습니다.
+            const feedUrl = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
             const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&cachebuster=${new Date().getTime()}`;
             
             try {
@@ -93,7 +93,6 @@
 
                 if (data.items && data.items.length > 0) {
                     data.items.forEach(item => {
-                        // 2. 이미지 추출 로직 강화 (description 뿐만 아니라 enclosure까지 확인)
                         let src = '';
                         if (item.enclosure && item.enclosure.link) {
                             src = item.enclosure.link;
@@ -103,7 +102,6 @@
                         }
 
                         if (src) {
-                            // 고화질 전환
                             src = src.replace('236x', 'originals').replace('736x', 'originals');
                             const card = document.createElement('div'); 
                             card.className = 'masonry-item';
