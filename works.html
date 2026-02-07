@@ -146,24 +146,45 @@
                 const repoUrl = `https://api.github.com/repos/${username}/${repo}/contents/content/projects?t=${new Date().getTime()}`;
                 
                 const repoResponse = await fetch(repoUrl);
+                if (!repoResponse.ok) throw new Error("GitHub 연결 실패");
                 const files = await repoResponse.json();
                 
                 allProjects = []; 
 
                 for (const file of files) {
                     if (!file.name.endsWith('.md')) continue;
-                    const response = await fetch(file.download_url);
-                    const text = await response.text();
-                    const yamlContent = text.split('---')[1];
-                    const data = jsyaml.load(yamlContent);
-                    if (data && data.category !== 'Taste') allProjects.push(data);
+
+                    // [핵심] 개별 파일마다 try-catch를 걸어서 하나가 죽어도 나머지는 살립니다.
+                    try {
+                        const response = await fetch(file.download_url);
+                        if (!response.ok) continue;
+                        
+                        const text = await response.text();
+                        const parts = text.split('---');
+                        if (parts.length < 2) continue; // 내용물 없으면 버림
+
+                        const yamlContent = parts[1];
+                        const data = jsyaml.load(yamlContent);
+                        
+                        // 데이터가 존재하고 타이틀이 있는 경우만 목록에 추가
+                        if (data && data.title) {
+                            if (data.category !== 'Taste') {
+                                allProjects.push(data);
+                            }
+                        }
+                    } catch (individualError) {
+                        // 깨진 파일이 발견되면 콘솔에 이름만 찍고 다음으로 넘어갑니다.
+                        console.warn(`파일 깨짐 건너뜀 (${file.name}):`, individualError);
+                        continue;
+                    }
                 }
 
+                // 무사히 불러온 것들만 모아서 정렬하고 화면에 뿌리기
                 allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
                 renderGrid();
 
             } catch (e) { 
-                console.error("로드 에러:", e);
+                console.error("전체 로드 에러:", e);
                 grid.innerHTML = '<p class="text-red-500 uppercase text-[10px]">Error loading projects.</p>';
             }
         }
