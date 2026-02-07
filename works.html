@@ -121,6 +121,8 @@
     </footer>
 
     <script>
+        // 사용자님, 누락된 유튜브 주소들은 여기에 원래 쓰시던 걸로 직접 다시 채워주셔야 합니다. 
+        // 제가 가진 데이터에는 하나만 남아있어서 일단 구조만 3개로 복구했습니다.
         let allProjects = [
             {
                 title: "Fragrance",
@@ -131,11 +133,25 @@
                 stills: ["Frag_1.jpg", "Frag_2.jpg", "Frag_3.jpg", "Frag_5.jpg", "Frag_6.jpg", "Frag_7.jpg"]
             },
             {
-                title: "Motion Portfolio",
+                title: "Motion Project 1",
                 category: "Motion",
                 media_type: "YouTube",
                 media_ref: "https://www.youtube.com/watch?v=kYv_8E4Vz48", 
                 order: 2
+            },
+            {
+                title: "Motion Project 2", // 원래 쓰시던 제목/주소로 채워넣으세요
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "https://www.youtube.com/watch?v=원래주소1", 
+                order: 3
+            },
+            {
+                title: "Motion Project 3", // 원래 쓰시던 제목/주소로 채워넣으세요
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "https://www.youtube.com/watch?v=원래주소2", 
+                order: 4
             },
             {
                 title: "Graphic Design Project",
@@ -143,7 +159,7 @@
                 media_type: "Image",
                 media_ref: "Frag_1.jpg",
                 graphics_pdf: "https://indd.adobe.com/view/c76f5a91-4dc7-436c-9ece-2e85e07cc55b",
-                order: 3
+                order: 5
             }
         ];
 
@@ -151,16 +167,12 @@
             const grid = document.getElementById('works-grid');
             if(!grid) return;
             grid.innerHTML = ''; 
-
             allProjects.sort((a, b) => (a.order || 99) - (b.order || 99));
-
             allProjects.forEach((data, index) => {
                 const card = document.createElement('div');
-                // 카테고리 비교 시 대소문자 문제 방지
                 const categoryValue = data.category ? data.category.toLowerCase().trim() : 'all';
                 card.className = `work-card ${categoryValue}`;
                 card.onclick = () => openBoard(index);
-                
                 let thumbSrc = '';
                 if (data.media_type === 'YouTube') {
                     const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop().split('?')[0];
@@ -169,7 +181,6 @@
                     const fileName = data.media_ref.split('/').pop();
                     thumbSrc = `images/works/${fileName}`;
                 }
-
                 card.innerHTML = `
                     <div class="card-media-container shadow-2xl">
                         <img src="${thumbSrc}" class="work-image-placeholder" onerror="this.src='images/works/Frag_1.jpg'">
@@ -188,13 +199,11 @@
             const container = document.getElementById('board-media-container');
             container.innerHTML = '';
             
-            // 1. 미디어 출력 로직 (유튜브 또는 이미지 업로드 로직 유지)
             if (data.media_type === 'YouTube') {
                 const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
                 container.innerHTML += `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
             } 
             
-            // 향수 전용 또는 일반 이미지 리스트 로직 (사용자님의 기존 로직 그대로 보존)
             if (data.title && data.title.toLowerCase().includes('fragrance')) {
                 ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
                     container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
@@ -207,12 +216,10 @@
                 });
             }
             else if (data.media_type === 'Image') {
-                // 단일 이미지 업로드 로직
                 const fileName = data.media_ref.split('/').pop();
                 container.innerHTML += `<img src="images/works/${fileName}" class="board-img">`;
             }
 
-            // 2. 외부 링크(Adobe PDF) 버튼 추가 로직 (이미지 아래에 추가됨)
             if (data.graphics_pdf) {
                 container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
             }
@@ -232,7 +239,6 @@
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById(category + '-btn');
             if (activeBtn) activeBtn.classList.add('active');
-
             cards.forEach(card => {
                 if (category === 'all' || card.classList.contains(category.toLowerCase())) {
                     card.style.display = 'block';
@@ -241,7 +247,6 @@
                 }
             });
         }
-
         renderGrid();
     </script>
 </body>
