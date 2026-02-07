@@ -9,32 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --brand-turquoise: #40E0D0; }
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; cursor: url("images/pointer.png"), auto; }
-        a, button { cursor: url("images/finger_pointer.png"), pointer !important; }
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; cursor: url("images/pointer.png"), auto; scroll-behavior: smooth; }
+        a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
+        
+        .section-title { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5em; color: var(--brand-turquoise); margin-bottom: 2rem; border-left: 2px solid var(--brand-turquoise); padding-left: 1rem; }
 
         .masonry-grid { column-count: 2; column-gap: 1.5rem; width: 100%; }
         @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
         @media (min-width: 1024px) { .masonry-grid { column-count: 4; } }
 
-        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); }
-        .masonry-item img { width: 100%; transition: 0.5s; }
-        .masonry-item:hover img { filter: grayscale(100%); opacity: 0.5; }
-        .masonry-item:hover { transform: scale(0.98); border-color: var(--brand-turquoise); }
+        .taste-item { break-inside: avoid; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; transition: 0.5s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: block; background: #111; }
+        .taste-item img { width: 100%; transition: 0.5s; display: block; }
+        .taste-item:hover img { filter: grayscale(100%); opacity: 0.5; }
+        .taste-item:hover { transform: scale(0.98); border-color: var(--brand-turquoise); }
 
-        .loader { border: 2px solid #222; border-top: 2px solid var(--brand-turquoise); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; margin: 100px auto; }
+        #hovering-board { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .board-content { width: 90%; max-width: 1100px; position: relative; }
+        .board-close { position: fixed; top: 40px; right: 40px; font-size: 40px; cursor: pointer; z-index: 10000; color: white; opacity: 0.5; }
+        .board-video-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; }
+        
+        .loader { border: 2px solid #222; border-top: 2px solid var(--brand-turquoise); border-radius: 50%; width: 20px; height: 20px; animation: spin 0.8s linear infinite; display: inline-block; margin-left: 10px; vertical-align: middle; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        #mobile-menu { transition: all 0.3s ease; }
     </style>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <header class="sticky top-0 z-50 bg-black/90 backdrop-blur-md p-4">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
-            </a>
-        
+            <a href="index.html"><img src="images/logo.png" alt="Logo" class="h-8 filter invert" /></a>
             <div class="space-x-8 uppercase text-xs font-bold hidden md:flex">
                 <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
                 <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
@@ -42,90 +43,95 @@
                 <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
                 <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
             </div>
-
-            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </button>
         </nav>
-
-        <div id="mobile-menu" class="hidden md:hidden bg-black/95 absolute top-full left-0 w-full p-6 space-y-4 flex flex-col text-center uppercase text-xs font-bold border-b border-white/10">
-            <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0]">Back to Home</a>
-            <a href="works.html" class="hover:text-[#40E0D0]">Works</a>
-            <a href="taste.html" class="text-[#40E0D0]">Taste</a>
-            <a href="about.html" class="hover:text-[#40E0D0]">About</a>
-            <a href="contact.html" class="hover:text-[#40E0D0]">Contact</a>
-        </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-20">
         <h1 class="text-6xl md:text-8xl font-black uppercase mb-16 tracking-tighter text-left">Taste</h1>
-        <div id="loading" class="loader"></div>
-        <div id="pinterest-grid" class="masonry-grid"></div>
+        
+        <div class="flex justify-start space-x-12 mb-20 text-[11px] font-black uppercase tracking-[0.4em]">
+            <a href="#videos-section" class="hover:text-[#40E0D0] transition">Videos</a>
+            <a href="#graphics-section" class="hover:text-[#40E0D0] transition">Graphics</a>
+        </div>
+
+        <section id="videos-section" class="mb-32">
+            <h2 class="section-title">Videos <span id="loading-videos" class="loader"></span></h2>
+            <div id="video-grid" class="masonry-grid"></div>
+        </section>
+
+        <section id="graphics-section">
+            <h2 class="section-title">Graphics <span id="loading-graphics" class="loader"></span></h2>
+            <div id="graphics-grid" class="masonry-grid"></div>
+        </section>
     </main>
 
-    <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
+    <div id="hovering-board" onclick="closeBoard()">
+        <span class="board-close" onclick="closeBoard()">&times;</span>
+        <div class="board-content" onclick="event.stopPropagation()">
+            <div id="board-media-container"></div>
+        </div>
+    </div>
 
     <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (menuBtn && mobileMenu) {
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-        async function fetchPinterest() {
-            // 보드 이름을 'graphic'으로 특정하여 업데이트 속도를 높였습니다.
-            const feedUrl = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
-            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&cachebuster=${new Date().getTime()}`;
+        // 공통 데이터 호출 함수 (rss2json 이용)
+        async function fetchRSS(url, gridId, loaderId, type) {
+            const grid = document.getElementById(gridId);
+            const loader = document.getElementById(loaderId);
+            const api_url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&cachebuster=${Date.now()}`;
             
             try {
-                const res = await fetch(api_url); 
+                const res = await fetch(api_url);
                 const data = await res.json();
-                const grid = document.getElementById('pinterest-grid'); 
-                const loading = document.getElementById('loading');
-                
-                if (loading) loading.style.display = 'none';
-                if (!grid) return;
+                if (loader) loader.style.display = 'none';
 
-                grid.innerHTML = ''; 
-
-                if (data.items && data.items.length > 0) {
+                if (data.items) {
                     data.items.forEach(item => {
-                        let src = '';
-                        if (item.enclosure && item.enclosure.link) {
-                            src = item.enclosure.link;
+                        const card = document.createElement('div');
+                        card.className = 'taste-item';
+                        
+                        if (type === 'video') {
+                            // 유튜브 RSS에서 비디오 ID 추출 (yt:videoId 태그 또는 링크 이용)
+                            const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
+                            card.onclick = () => openBoard(videoId);
+                            card.innerHTML = `<img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'">`;
                         } else {
-                            const imgMatch = item.description.match(/src="([^"]+)"/);
-                            src = imgMatch ? imgMatch[1] : '';
+                            // 핀터레스트 이미지 추출 및 고화질화
+                            let src = item.enclosure?.link || (item.description.match(/src="([^"]+)"/) || [])[1];
+                            if (src) {
+                                src = src.replace('236x', 'originals').replace('736x', 'originals');
+                                card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'"></a>`;
+                            }
                         }
-
-                        if (src) {
-                            src = src.replace('236x', 'originals').replace('736x', 'originals');
-                            const card = document.createElement('div'); 
-                            card.className = 'masonry-item';
-                            card.innerHTML = `<a href="${item.link}" target="_blank"><img src="${src}" loading="lazy" onerror="this.src='${src.replace('originals', '736x')}'"></a>`;
-                            grid.appendChild(card);
-                        }
+                        grid.appendChild(card);
                     });
                 }
-            } catch (e) { 
-                console.error("Pinterest Load Error:", e);
+            } catch (e) {
+                console.error(e);
+                if (loader) loader.style.display = 'none';
             }
         }
-        
-        fetchPinterest();
 
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                    });
-                }
-            });
+        function openBoard(id) {
+            const container = document.getElementById('board-media-container');
+            container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
+            document.getElementById('hovering-board').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
+
+        function closeBoard() {
+            document.getElementById('board-media-container').innerHTML = '';
+            document.getElementById('hovering-board').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 실행: 유튜브 플레이리스트 RSS & 핀터레스트 보드 RSS
+        const youtubePlaylistRSS = `https://www.youtube.com/feeds/videos.xml?playlist_id=PLxzd-BVdaE31qUOCVWhUYktazWLdiRXJ1`;
+        const pinterestBoardRSS = `https://www.pinterest.com/sunghwachoy/graphic.rss`;
+
+        window.onload = () => {
+            fetchRSS(youtubePlaylistRSS, 'video-grid', 'loading-videos', 'video');
+            fetchRSS(pinterestBoardRSS, 'graphics-grid', 'loading-graphics', 'graphic');
+        };
     </script>
 </body>
 </html>
