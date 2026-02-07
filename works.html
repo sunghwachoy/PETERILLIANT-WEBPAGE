@@ -103,7 +103,7 @@
             <button onclick="filterWorks('all')" class="filter-btn active" id="all-btn">All</button>
             <button onclick="filterWorks('motion')" class="filter-btn" id="motion-btn">Motion</button>
             <button onclick="filterWorks('stills')" class="filter-btn" id="stills-btn">Stills</button>
-            <button onclick="filterWorks('graphics')" class="filter-btn" id="graphics-btn">raphics</button>
+            <button onclick="filterWorks('graphics')" class="filter-btn" id="graphics-btn">Graphics</button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="works-grid"></div>
@@ -121,7 +121,7 @@
     </footer>
 
     <script>
-        // 작품 데이터를 실제 파일 구조에 맞게 수동 업데이트했습니다.
+        // 사용자님이 원하셨던 유튜브 3개와 나머지 데이터 구조를 유지합니다.
         let allProjects = [
             {
                 title: "Fragrance",
@@ -132,19 +132,33 @@
                 stills: ["Frag_1.jpg", "Frag_2.jpg", "Frag_3.jpg", "Frag_5.jpg", "Frag_6.jpg", "Frag_7.jpg"]
             },
             {
-                title: "Motion Portfolio",
+                title: "Motion Portfolio 1",
                 category: "Motion",
                 media_type: "YouTube",
                 media_ref: "https://www.youtube.com/watch?v=kYv_8E4Vz48", 
                 order: 2
             },
             {
+                title: "Motion Portfolio 2",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "https://www.youtube.com/watch?v=N679B-N5Rz0", 
+                order: 3
+            },
+            {
+                title: "Motion Portfolio 3",
+                category: "Motion",
+                media_type: "YouTube",
+                media_ref: "https://www.youtube.com/watch?v=0kH81u1-M_Q", 
+                order: 4
+            },
+            {
                 title: "Graphic Design Project",
                 category: "Graphics",
                 media_type: "Image",
-                media_ref: "Frag_1.jpg",
+                media_ref: "images/works/Frag_1.jpg",
                 graphics_pdf: "https://indd.adobe.com/view/c76f5a91-4dc7-436c-9ece-2e85e07cc55b",
-                order: 3
+                order: 5
             }
         ];
 
@@ -188,11 +202,13 @@
             const container = document.getElementById('board-media-container');
             container.innerHTML = '';
             
+            // 1. 영상 로직
             if (data.media_type === 'YouTube') {
                 const videoId = data.media_ref.split('v=')[1]?.split('&')[0] || data.media_ref.split('/').pop();
                 container.innerHTML = `<div class="board-video-wrapper"><iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe></div>`;
             } 
-            else if (data.title && data.title.toLowerCase().includes('fragrance')) {
+            // 2. 이미지 로직 (Fragrance 및 기타 스틸컷)
+            if (data.title && data.title.toLowerCase().includes('fragrance')) {
                 ['Frag_1.jpg', 'Frag_2.jpg', 'Frag_3.jpg', 'Frag_5.jpg', 'Frag_6.jpg', 'Frag_7.jpg'].forEach(img => {
                     container.innerHTML += `<img src="images/works/${img}" class="board-img">`;
                 });
@@ -203,7 +219,12 @@
                     container.innerHTML += `<img src="images/works/${sImg}" class="board-img">`;
                 });
             }
+            else if (data.media_type === 'Image') {
+                const fileName = data.media_ref.split('/').pop();
+                container.innerHTML += `<img src="images/works/${fileName}" class="board-img">`;
+            }
 
+            // 3. PDF 버튼 로직 (if로 분리하여 이미지와 공존 가능하게 함)
             if (data.graphics_pdf) {
                 container.innerHTML += `<a href="${data.graphics_pdf}" target="_blank" class="board-pdf-btn">VIEW FULL PROJECT (PDF)</a>`;
             }
@@ -233,8 +254,7 @@
             });
         }
 
-        // 초기화
-        renderGrid();
+        window.onload = renderGrid;
     </script>
 </body>
 </html>
