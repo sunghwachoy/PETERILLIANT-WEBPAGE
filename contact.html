@@ -78,7 +78,7 @@
     </style>
 </head>
 <body>
-   <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
+    <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
                 <img src="images/logo.png" alt="Logo" class="h-8" />
@@ -149,7 +149,7 @@
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        if (menuBtn) {
+        if (menuBtn && mobileMenu) {
             menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });

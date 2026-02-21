@@ -62,7 +62,7 @@
     </header>
 
     <script>
-        // 메뉴 토글 (기존 스크립트 태그 안에 넣으시거나, 이 조각을 추가하세요)
+        // 메뉴 토글 로직
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         if (menuBtn && mobileMenu) {
@@ -124,9 +124,7 @@
                 if (loader) loader.style.display = 'none';
                 
                 if (data.items) {
-                    // 이 한 줄이 추가되었습니다: 배열의 순서를 반대로 뒤집음
                     data.items.reverse(); 
-
                     grid.innerHTML = '';
                     data.items.forEach(item => {
                         const videoId = item.link.split('v=')[1]?.split('&')[0] || item.guid.split(':').pop();
@@ -184,7 +182,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // 실행 시점 최적화: 새로고침 없이 바로 뜨게 함
         function init() {
             fetchYoutube();
             fetchPinterest();

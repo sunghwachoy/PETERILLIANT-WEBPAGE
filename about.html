@@ -108,11 +108,11 @@
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // 메뉴 관련 스크립트
+        // 메뉴 관련 스크립트 (중복 제거됨)
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        if (menuBtn) {
+        if (menuBtn && mobileMenu) {
             menuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
