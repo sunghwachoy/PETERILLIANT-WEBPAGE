@@ -17,6 +17,14 @@
             overflow-x: hidden;
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
+        
+        /* 헤더 아이템 색상 강제 지정 (흰색 배경인 index와 달리 여기는 상시 흰색이어야 함) */
+        .nav-link-white { color: #ffffff !important; transition: all 0.3s ease; }
+        .nav-link-white:hover { color: var(--brand-turquoise) !important; }
+        .nav-link-gray { color: rgba(255,255,255,0.5) !important; transition: all 0.3s ease; }
+        .nav-link-gray:hover { color: var(--brand-turquoise) !important; }
+        .nav-logo { filter: invert(0); } /* 검정배경이므로 로고는 원래색(흰색계열) 유지 */
+
         .filter-btn { transition: all 0.3s ease; position: relative; opacity: 0.4; cursor: pointer; }
         .filter-btn.active { opacity: 1; color: var(--brand-turquoise); }
         .filter-btn.active::after {
@@ -58,18 +66,18 @@
     <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8" />
+                <img src="images/logo.png" alt="Logo" class="h-8 nav-logo" />
             </a>
             
-            <div class="hidden md:flex space-x-8 text-black uppercase text-xs font-bold">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
+            <div class="hidden md:flex space-x-8 uppercase text-xs font-bold">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="nav-link-gray">Back to Home</a>
                 <a href="works.html" class="text-[#40E0D0]">Works</a>
-                <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
-                <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
-                <a href="contact.html" class="hover:text-[#40E0D0] transition">Contact</a>
+                <a href="taste.html" class="nav-link-white">Taste</a>
+                <a href="about.html" class="nav-link-white">About</a>
+                <a href="contact.html" class="nav-link-white">Contact</a>
             </div>
 
-            <button id="menu-btn" class="md:hidden text-black focus:outline-none">
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
                 </svg>
@@ -86,7 +94,6 @@
     </header>
 
     <script>
-        // 메뉴 토글 로직
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         if (menuBtn && mobileMenu) {
@@ -115,7 +122,6 @@
     </div>
 
     <script>
-        // 데이터 하나도 빠짐없이 100% 유지
         let allProjects = [
             {
                 title: "AirPods pro3 X Zootopia 2 Concept AD",

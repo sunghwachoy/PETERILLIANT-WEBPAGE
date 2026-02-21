@@ -18,11 +18,15 @@
             overflow-x: hidden;
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
-        .nav-link-white { transition: all 0.3s ease; color: #ffffff; }
-        .nav-link-white:hover { color: var(--brand-turquoise); }
-        .nav-link-gray { transition: all 0.3s ease; color: rgba(255,255,255,0.5); }
-        .nav-link-gray:hover { color: var(--brand-turquoise); opacity: 1; }
-        .nav-active { color: var(--brand-turquoise); font-weight: 900; }
+        
+        /* 헤더 아이템 색상 (검정 배경용 흰색 설정) */
+        .nav-link-white { transition: all 0.3s ease; color: #ffffff !important; }
+        .nav-link-white:hover { color: var(--brand-turquoise) !important; }
+        .nav-link-gray { transition: all 0.3s ease; color: rgba(255,255,255,0.5) !important; }
+        .nav-link-gray:hover { color: var(--brand-turquoise) !important; }
+        .nav-active { color: var(--brand-turquoise) !important; font-weight: 900; }
+        .nav-logo { filter: invert(0); } /* 검정 배경이므로 로고 흰색 유지 */
+
         .info-row {
             display: grid;
             grid-template-columns: 1fr 2fr; 
@@ -47,18 +51,18 @@
    <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8" />
+                <img src="images/logo.png" alt="Logo" class="h-8 nav-logo" />
             </a>
             
-            <div class="hidden md:flex space-x-8 text-black uppercase text-xs font-bold">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="nav-link-gray !text-black/50 hover:!text-[#40E0D0]">Back to Home</a>
-                <a href="works.html" class="nav-link-white !text-black hover:!text-[#40E0D0]">Works</a>
-                <a href="taste.html" class="nav-link-white !text-black hover:!text-[#40E0D0]">Taste</a>
-                <a href="about.html" class="nav-active !text-[#40E0D0]">About</a>
-                <a href="contact.html" class="nav-link-white !text-black hover:!text-[#40E0D0]">Contact</a>
+            <div class="hidden md:flex space-x-8 uppercase text-xs font-bold">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="nav-link-gray">Back to Home</a>
+                <a href="works.html" class="nav-link-white">Works</a>
+                <a href="taste.html" class="nav-link-white">Taste</a>
+                <a href="about.html" class="nav-active">About</a>
+                <a href="contact.html" class="nav-link-white">Contact</a>
             </div>
 
-            <button id="menu-btn" class="md:hidden text-black focus:outline-none">
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
                 </svg>
@@ -108,7 +112,6 @@
     <footer class="p-20 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">&copy; 2026 Peterilliant.</footer>
 
     <script>
-        // 메뉴 관련 스크립트 (중복 제거됨)
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -118,7 +121,6 @@
             });
         }
 
-        // Netlify Identity 로그인 후 관리자 페이지로 리다이렉트 로직
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
                 if (!user) {

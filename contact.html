@@ -18,6 +18,14 @@
         }
         a, button { cursor: url("images/finger_pointer.png"), pointer !important; outline: none; }
         
+        /* 헤더 아이템 색상 (검정 배경용 흰색 설정) */
+        .nav-link-white { transition: all 0.3s ease; color: #ffffff !important; }
+        .nav-link-white:hover { color: var(--brand-turquoise) !important; }
+        .nav-link-gray { transition: all 0.3s ease; color: rgba(255,255,255,0.5) !important; }
+        .nav-link-gray:hover { color: var(--brand-turquoise) !important; }
+        .nav-active { color: var(--brand-turquoise) !important; font-weight: 900; }
+        .nav-logo { filter: invert(0); } /* 검정 배경이므로 로고 흰색 유지 */
+
         .clean-link {
             transition: all 0.3s ease;
             display: inline-block;
@@ -81,18 +89,18 @@
     <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8" />
+                <img src="images/logo.png" alt="Logo" class="h-8 nav-logo" />
             </a>
             
-            <div class="hidden md:flex space-x-8 text-black uppercase text-xs font-bold">
-                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="hover:text-[#40E0D0] transition opacity-50">Back to Home</a>
-                <a href="works.html" class="hover:text-[#40E0D0] transition">Works</a>
-                <a href="taste.html" class="hover:text-[#40E0D0] transition">Taste</a>
-                <a href="about.html" class="hover:text-[#40E0D0] transition">About</a>
-                <a href="contact.html" class="text-[#40E0D0]">Contact</a>
+            <div class="hidden md:flex space-x-8 uppercase text-xs font-bold">
+                <a href="index.html" onclick="sessionStorage.setItem('skipIntro', 'true')" class="nav-link-gray">Back to Home</a>
+                <a href="works.html" class="nav-link-white">Works</a>
+                <a href="taste.html" class="nav-link-white">Taste</a>
+                <a href="about.html" class="nav-link-white">About</a>
+                <a href="contact.html" class="nav-active">Contact</a>
             </div>
 
-            <button id="menu-btn" class="md:hidden text-black focus:outline-none">
+            <button id="menu-btn" class="md:hidden text-white focus:outline-none">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8h16M4 16h16"></path>
                 </svg>
@@ -145,7 +153,6 @@
     </main>
 
     <script>
-        // 메뉴 토글
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -155,7 +162,6 @@
             });
         }
 
-        // 복사 로직
         function copyToClipboard(text, label) {
             navigator.clipboard.writeText(text).then(() => {
                 const instruction = document.getElementById('instruction-text');
@@ -170,7 +176,6 @@
             });
         }
 
-        // Netlify Identity 리다이렉트
         if (window.netlifyIdentity) {
             window.netlifyIdentity.on("init", user => {
                 if (!user) {
