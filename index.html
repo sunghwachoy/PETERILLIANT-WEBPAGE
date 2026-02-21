@@ -39,13 +39,22 @@
         .video-cropper { width: 90%; max-width: 800px; margin: 0 auto; overflow: hidden; display: flex; position: relative; }
         .hero-logo-img { width: 100%; height: auto; transform: scale(1.05); mix-blend-mode: multiply; transition: filter 0.5s ease; }
         
+        /* [배경 반전 시 스타일] */
         body.scrolled { background-color: #0a0a0a; color: #ffffff !important; }
         body.scrolled .hero-logo-img { mix-blend-mode: normal; filter: invert(1); }
         
+        /* 헤더 로고: 처음엔 흰색 배경이므로 invert(1)로 검정색 유지, 스크롤시 invert(0)으로 흰색 복구 */
+        .nav-logo { transition: filter 0.6s ease; filter: invert(1); }
+        body.scrolled .nav-logo { filter: invert(0); }
+
+        /* 헤더 메뉴 글씨 및 아이콘: 스크롤시 흰색으로 변환 */
+        header nav div a, #menu-btn { transition: color 0.6s ease; }
+        body.scrolled header nav div a { color: #ffffff; }
+        body.scrolled #menu-btn { color: #ffffff; }
+
         .project-card { background-color: #f6f6f6; border-radius: 1.5rem; border: 1px solid #ddd; overflow: hidden; transition: 0.4s; height: 100%; }
         body.scrolled .project-card { background-color: #111; border-color: #222; }
         
-        /* 뺑뺑이 방지: 기존 비디오 컨테이너 스타일 유지 */
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .video-container iframe, .video-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
         
@@ -67,7 +76,7 @@
     <header class="fixed top-0 w-full z-50 p-6 bg-transparent">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="index.html">
-                <img src="images/logo.png" alt="Logo" class="h-8 filter invert" />
+                <img src="images/logo.png" alt="Logo" class="h-8 nav-logo" />
             </a>
             <div class="hidden md:flex space-x-8 text-black uppercase text-xs font-bold">
                 <a href="works.html" class="hover-turquoise transition">Works</a>
@@ -81,7 +90,7 @@
                 </svg>
             </button>
         </nav>
-        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white">
+        <div id="mobile-menu" class="hidden md:hidden flex flex-col items-end space-y-6 pt-10 pb-4 uppercase text-sm font-black text-right text-white bg-black/95 absolute top-0 left-0 w-full p-6 z-[-1]">
             <a href="works.html" class="hover-turquoise transition">Works</a>
             <a href="taste.html">Taste</a>
             <a href="about.html">About</a>
@@ -160,7 +169,6 @@
             });
         }
 
-        // 뺑뺑이 탈출: 메뉴 버튼 리스너 복구
         if (menuBtn) {
             menuBtn.addEventListener('click', () => { 
                 mobileMenu.classList.toggle('hidden'); 
@@ -172,7 +180,6 @@
             else document.body.classList.remove('scrolled'); 
         };
 
-        // 이 로직만 정교하게 삽입했습니다.
         async function loadFeaturedWorks() {
             const grid = document.getElementById('featured-grid');
             try {
